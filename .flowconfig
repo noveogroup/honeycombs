@@ -1,0 +1,12 @@
+[ignore]
+
+[include]
+
+[libs]
+
+[lints]
+
+[options]
+module.name_mapper='^most-fsm$' -> '<PROJECT_ROOT>/packages/most-fsm/lib'
+
+[strict]

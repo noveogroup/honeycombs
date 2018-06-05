@@ -1,0 +1,46 @@
+parser: babel-eslint
+
+plugins:
+  - flowtype
+  - prettier
+
+extends:
+  - airbnb-base
+  - plugin:prettier/recommended
+
+env:
+  node: true
+  browser: true
+
+settings:
+  import/resolver:
+    node:
+      paths:
+        - packages
+
+rules:
+
+  prettier/prettier: error
+
+  eqeqeq: [error, smart]
+  no-dupe-keys: error
+  no-return-assign: off
+
+  import/prefer-default-export: off
+
+  flowtype/define-flow-type: error
+  flowtype/no-dupe-keys: error
+  flowtype/no-flow-fix-me-comments: off
+  flowtype/no-mutable-array: error
+  flowtype/no-primitive-constructor-types: error
+  flowtype/no-types-missing-file-annotation: error
+  flowtype/no-unused-expressions: off
+  flowtype/no-weak-types: off
+  flowtype/require-exact-type: off
+  flowtype/require-parameter-type: [off, { excludeParameterMatch: '^_[0-9]*$' }]
+  flowtype/require-return-type: off
+  flowtype/require-valid-file-annotation: [error, never, { annotationStyle: block }]
+  flowtype/require-variable-type: off
+  flowtype/sort-keys: off
+  flowtype/type-id-match: [error, '^[A-Z][a-z0-9]*']
+  flowtype/use-flow-type: error
