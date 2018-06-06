@@ -26,5 +26,14 @@
     "LICENSE.md",
     "lib",
     "src"
+  ],
+  "keywords": [
+    "Most",
+    "Most.js",
+    "Observable",
+    "FSM",
+    "finite-state machine",
+    "state",
+    "state manager"
   ]
 }
