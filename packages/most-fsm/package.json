@@ -7,7 +7,8 @@
     "url": "https://github.com/bigslycat/most-fsm/issues",
     "email": "me@stupidcat.wtf"
   },
-  "repository": "git@github.com:bigslycat/most-fsm.git",
+  "repository": "bigslycat/most-fsm",
+  "homepage": "https://github.com/bigslycat/most-fsm/tree/master/packages/most-fsm",
   "author": "Pavel Tereschenko <me@stupidcat.wtf> (https://github.com/bigslycat)",
   "license": "MIT",
   "private": false,
