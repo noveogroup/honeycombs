@@ -5,7 +5,7 @@ plugins:
   - prettier
 
 extends:
-  - airbnb-base
+  - airbnb
   - plugin:prettier/recommended
 
 env:
@@ -27,6 +27,8 @@ rules:
   no-return-assign: off
 
   import/prefer-default-export: off
+
+  react/jsx-filename-extension: [error, { extensions: [.js] }]
 
   flowtype/define-flow-type: error
   flowtype/no-dupe-keys: error

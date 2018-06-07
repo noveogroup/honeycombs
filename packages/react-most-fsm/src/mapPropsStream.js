@@ -39,6 +39,6 @@ export const mapPropsStream: MapPropsStream = <P: {}, R: {}>(
     subscription: Subscription<R>;
 
     render() {
-      return React.createElement(Component, this.state);
+      return <Component {...this.state} />;
     }
   };
