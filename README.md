@@ -1,7 +1,9 @@
-# Most FSM
+# stream-state
 
 Observable finite-state machine based on [Most.js](https://github.com/cujojs/most).
 
 ## Packages
 
-- [`most-fsm`](/packages/most-fsm) — FSM
+- [`stream-state`](/packages/stream-state) — FSM
+
+- [`stream-hocs`](/packages/stream-hocs) — React HOCs for Observables

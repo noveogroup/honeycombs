@@ -1,14 +1,14 @@
 {
-  "name": "most-fsm",
+  "name": "stream-state",
   "version": "1.0.0",
   "description": "Observable finite-state machine",
   "main": "lib/index.js",
   "bugs": {
-    "url": "https://github.com/bigslycat/most-fsm/issues",
+    "url": "https://github.com/bigslycat/stream-state/issues",
     "email": "me@stupidcat.wtf"
   },
-  "repository": "bigslycat/most-fsm",
-  "homepage": "https://github.com/bigslycat/most-fsm/tree/master/packages/most-fsm",
+  "repository": "bigslycat/stream-state",
+  "homepage": "https://github.com/bigslycat/stream-state/tree/master/packages/stream-state",
   "author": "Pavel Tereschenko <me@stupidcat.wtf> (https://github.com/bigslycat)",
   "license": "MIT",
   "private": false,
@@ -34,6 +34,8 @@
     "Observable",
     "FSM",
     "finite-state machine",
+    "stream",
+    "streams",
     "state",
     "state manager"
   ]

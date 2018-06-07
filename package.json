@@ -1,5 +1,5 @@
 {
-  "name": "most-fsm-packages",
+  "name": "stream-state",
   "private": true,
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.49",

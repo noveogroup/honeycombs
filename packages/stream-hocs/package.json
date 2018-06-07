@@ -1,9 +1,9 @@
 {
-  "name": "react-most-fsm",
+  "name": "stream-hocs",
   "version": "1.0.0",
-  "description": "React bindings for most-fsm",
+  "description": "React HOCs for Observables",
   "main": "lib/index.js",
-  "repository": "git@github.com:bigslycat/most-fsm.git",
+  "repository": "git@github.com:bigslycat/stream-state.git",
   "author": "Pavel Tereschenko <me@stupidcat.wtf> (https://github.com/bigslycat)",
   "license": "MIT",
   "private": false,
