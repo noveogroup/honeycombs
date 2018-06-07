@@ -7,6 +7,9 @@
   "author": "Pavel Tereschenko <me@stupidcat.wtf> (https://github.com/bigslycat)",
   "license": "MIT",
   "private": false,
+  "dependencies": {
+    "stream-fsm": "^1.0.0"
+  },
   "peerDependencies": {
     "most": "^1.7.3",
     "react": "^16.4.0"
