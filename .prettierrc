@@ -9,7 +9,6 @@
   "jsxBracketSameLine": true,
   "arrowParens": "avoid",
   "rangeStart": 0,
-  "parser": "flow",
   "requirePragma": false,
   "insertPragma": false,
   "proseWrap": "preserve"
