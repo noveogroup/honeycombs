@@ -17,6 +17,9 @@ settings:
     node:
       paths:
         - packages
+      extensions:
+        - .js
+        - .flow
 
 rules:
 
