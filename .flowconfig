@@ -1,4 +1,5 @@
 [ignore]
+<PROJECT_ROOT>/node_modules/config-chain/test/broken.json
 
 [include]
 
@@ -7,6 +8,12 @@
 [lints]
 
 [options]
-module.name_mapper='^most-fsm$' -> '<PROJECT_ROOT>/packages/most-fsm/lib'
+esproposal.class_instance_fields=enable
+esproposal.class_static_fields=enable
+esproposal.export_star_as=enable
+esproposal.optional_chaining=enable
+munge_underscores=true
+module.name_mapper='^honeycombs$' -> '<PROJECT_ROOT>/packages/honeycombs/lib'
+module.name_mapper='^es-observable$' -> '<PROJECT_ROOT>/packages/es-observable/lib'
 
 [strict]
