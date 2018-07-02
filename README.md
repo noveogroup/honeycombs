@@ -1,9 +1,9 @@
-# stream-state
+# Honeycombs
 
-Observable finite-state machine based on [Most.js](https://github.com/cujojs/most).
+Observable finite-state machine.
 
 ## Packages
 
-- [`stream-state`](/packages/stream-state) — FSM
+- [`es-observable`](/packages/es-observable) — FSM
 
-- [`stream-hocs`](/packages/stream-hocs) — React HOCs for Observables
+- [`Honeycombs`](/packages/honeycombs) — FSM
