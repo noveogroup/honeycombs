@@ -1,6 +1,6 @@
 # Honeycombs
 
-Observable finite-state machine.
+WIP. Observable finite-state machine.
 
 ## Packages
 
