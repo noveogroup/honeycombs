@@ -1,3 +1,3 @@
-# Honeycombs
+# es-observable
 
-WIP. Observable finite-state machine.
+WIP. ES Observable implementation
