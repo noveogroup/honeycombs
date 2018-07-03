@@ -5,47 +5,48 @@ import type { ObserverInterface, ObservableInterface } from 'es-observable';
 
 import { StoreObservable } from './StoreObservable';
 import { StateSubject } from './StateSubject';
-import { SimpleStore, type SimpleStoreLike } from './SimpleStore';
+import { Queue } from './Queue';
+import type { SimpleStoreLike } from './SimpleStore';
 
 export class Case<S, P> extends StoreObservable<S>
   implements ObservableInterface<S>, SimpleStoreLike<S>, ObserverInterface<P> {
   static from<ST, PT>(
-    store: SimpleStore<ST>,
+    queue: Queue<ST>,
     mainSubject: StateSubject<ST>,
     handler: (
       state: ST,
       payload: PT,
     ) => ObservableInterface<ST> | Promise<ST> | ST,
   ): Case<ST, PT> {
-    return new Case(store, mainSubject, handler);
+    return new Case(queue, mainSubject, handler);
   }
 
   static payload<ST, PT>(
-    store: SimpleStore<ST>,
+    queue: Queue<ST>,
     mainSubject: StateSubject<ST>,
     handler: (payload: PT) => ObservableInterface<ST> | Promise<ST> | ST,
   ): Case<ST, PT> {
-    return Case.from(store, mainSubject, (_: ST, payload: PT) =>
+    return Case.from(queue, mainSubject, (_: ST, payload: PT) =>
       handler(payload),
     );
   }
 
   static always<ST>(
-    store: SimpleStore<ST>,
+    queue: Queue<ST>,
     mainSubject: StateSubject<ST>,
     payload: ST,
   ): Case<ST, void> {
-    return Case.from(store, mainSubject, () => payload);
+    return Case.from(queue, mainSubject, () => payload);
   }
 
   static set<ST>(
-    store: SimpleStore<ST>,
+    queue: Queue<ST>,
     mainSubject: StateSubject<ST>,
   ): Case<ST, ST> {
-    return Case.from(store, mainSubject, (_, payload: ST) => payload);
+    return Case.from(queue, mainSubject, (_, payload: ST) => payload);
   }
 
-  #store /* : SimpleStore<S> */;
+  #queue /* : Queue<S> */;
 
   #mainSubject /* : StateSubject<S> */;
 
@@ -53,67 +54,74 @@ export class Case<S, P> extends StoreObservable<S>
 
   #handler /* : (state: S, payload: P) => ObservableInterface<S> | Promise<S> | S */;
 
+  #getState /* : () => S */;
+
+  #next /* : (S) => void */;
+
+  #error /* : (Error) => void */;
+
+  #complete /* : () => void */;
+
   constructor(
-    store: SimpleStore<S>,
+    queue: Queue<S>,
     mainSubject: StateSubject<S>,
     handler: (state: S, payload: P) => ObservableInterface<S> | Promise<S> | S,
   ) {
+    const store = queue.getStore();
     const subject = new StateSubject(store);
     super(store, subject);
     this.#mainSubject = mainSubject;
     this.#handler = handler;
-    this.#store = store;
     this.#subject = subject;
+    this.#getState = () => store.getState();
+    this.#queue = queue;
+
+    this.#next = (newState: S) => {
+      store.setState(newState);
+      subject.next(newState);
+      mainSubject.next(newState);
+    };
+
+    this.#error = error => {
+      subject.error(error);
+      mainSubject.error(error);
+    };
   }
 
   next(payload: P) {
     const handler = this.#handler;
-    const store = this.#store;
-    const subject = this.#subject;
-    const mainSubject = this.#mainSubject;
+    const next = this.#next;
+    const error = this.#error;
 
-    const result: ObservableInterface<S> | Promise<S> | S = handler(
-      store.getState(),
-      payload,
+    this.#queue.run(
+      state =>
+        new Promise(resolve => {
+          const result: ObservableInterface<S> | Promise<S> | S = handler(
+            state,
+            payload,
+          );
+
+          // $FlowFixMe
+          if (typeof result[$$observable] == 'function') {
+            // $FlowFixMe
+            const observable: ObservableInterface<S> = result[$$observable]();
+
+            observable.subscribe(
+              next,
+              err => {
+                error(err);
+                resolve();
+              },
+              resolve,
+            );
+            // $FlowFixMe
+          } else if (typeof result.then == 'function') {
+            result.then(next, error).then(resolve);
+          } else {
+            next((result: any));
+            resolve();
+          }
+        }),
     );
-
-    // $FlowFixMe
-    if (typeof result[$$observable] == 'function') {
-      // $FlowFixMe
-      const observable: ObservableInterface<S> = result[$$observable]();
-
-      observable.subscribe(
-        value => {
-          const newState = store.setState(value);
-          subject.next(newState);
-          mainSubject.next(newState);
-        },
-        error => {
-          subject.error(error);
-          mainSubject.error(error);
-        },
-        () => {
-          subject.complete();
-          mainSubject.complete();
-        },
-      );
-      // $FlowFixMe
-    } else if (typeof result.then == 'function') {
-      result.then(
-        value => {
-          const newState = store.setState(value);
-          subject.next(newState);
-          mainSubject.next(newState);
-        },
-        error => {
-          subject.error(error);
-          mainSubject.error(error);
-        },
-      );
-    } else {
-      const newState = store.setState((result: any));
-      this.#subject.next(newState);
-      this.#mainSubject.next(newState);
-    }
   }
 }
