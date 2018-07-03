@@ -26,10 +26,13 @@ test('Store', async t => {
   t.is(counter.getState(), 0);
 
   const inc = counter.case(state => state + 1);
-  const dec = counter.case(state => state - 1);
+
+  const dec = counter.case(async state => state - 1);
+
   const add = counter.case((state, payload) => state + payload);
+
   const set = counter.set();
-  const setDouble = counter.payload(payload => payload * 2);
+  const setDouble = counter.payload(payload => Observable.of(payload * 2));
   const reset = counter.always(initialState);
 
   const storeObservable = createObservable(counter);
@@ -40,30 +43,15 @@ test('Store', async t => {
   const setDoubleObservable = createObservable(setDouble);
   const resetObservable = createObservable(reset);
 
-  setTimeout(() => {
-    inc.next();
-    t.is(counter.getState(), 1);
+  inc.next();
+  inc.next();
+  dec.next();
+  add.next(10);
+  set.next(100500);
+  setDouble.next(100500);
+  reset.next();
 
-    inc.next();
-    t.is(counter.getState(), 2);
-
-    dec.next();
-    t.is(counter.getState(), 1);
-
-    add.next(10);
-    t.is(counter.getState(), 11);
-
-    set.next(100500);
-    t.is(counter.getState(), 100500);
-
-    setDouble.next(100500);
-    t.is(counter.getState(), 100500 * 2);
-
-    reset.next();
-    t.is(counter.getState(), initialState);
-
-    completeSubject.complete();
-  }, 0);
+  setTimeout(() => completeSubject.complete(), 0);
 
   const [
     storeValues,
@@ -93,6 +81,7 @@ test('Store', async t => {
     100500 * 2,
     initialState,
   ]);
+
   t.deepEqual(incValues, [initialState, 1, 2]);
   t.deepEqual(decValues, [initialState, 1]);
   t.deepEqual(addValues, [initialState, 11]);
