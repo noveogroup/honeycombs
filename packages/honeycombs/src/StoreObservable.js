@@ -26,15 +26,19 @@ export class StoreObservable<S>
     return this.#store.getState();
   }
 
-  subscribe(observer: (S => any) | ObserverInterface<S>): Subscription<S> {
-    return this.#subject.subscribe(observer);
+  subscribe(
+    next: (S => void) | ObserverInterface<S>,
+    error?: Error => void,
+    complete?: () => void,
+  ): Subscription<S> {
+    return this.#subject.subscribe((next: any), error, complete);
   }
 
   /* ::
   +subscribe: ((
-    next: (S) => any,
-    error?: (Error) => any,
-    complete?: () => any,
+    next: (S) => void,
+    error?: (Error) => void,
+    complete?: () => void,
   ) => Subscription<S>) &
     ((observer: ObserverInterface<S>) => Subscription<S>);
   */
