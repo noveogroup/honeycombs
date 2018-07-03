@@ -29,6 +29,7 @@ test('Store', async t => {
   const dec = counter.case(state => state - 1);
   const add = counter.case((state, payload) => state + payload);
   const set = counter.set();
+  const setDouble = counter.payload(payload => payload * 2);
   const reset = counter.always(initialState);
 
   const storeObservable = createObservable(counter);
@@ -36,6 +37,7 @@ test('Store', async t => {
   const decObservable = createObservable(dec);
   const addObservable = createObservable(add);
   const setObservable = createObservable(set);
+  const setDoubleObservable = createObservable(setDouble);
   const resetObservable = createObservable(reset);
 
   setTimeout(() => {
@@ -54,6 +56,9 @@ test('Store', async t => {
     set.next(100500);
     t.is(counter.getState(), 100500);
 
+    setDouble.next(100500);
+    t.is(counter.getState(), 100500 * 2);
+
     reset.next();
     t.is(counter.getState(), initialState);
 
@@ -66,6 +71,7 @@ test('Store', async t => {
     decValues,
     addValues,
     setValues,
+    setDoubleValues,
     resetValues,
   ] = await Promise.all([
     reduce(storeObservable),
@@ -73,13 +79,24 @@ test('Store', async t => {
     reduce(decObservable),
     reduce(addObservable),
     reduce(setObservable),
+    reduce(setDoubleObservable),
     reduce(resetObservable),
   ]);
 
-  t.deepEqual(storeValues, [initialState, 1, 2, 1, 11, 100500, initialState]);
+  t.deepEqual(storeValues, [
+    initialState,
+    1,
+    2,
+    1,
+    11,
+    100500,
+    100500 * 2,
+    initialState,
+  ]);
   t.deepEqual(incValues, [initialState, 1, 2]);
   t.deepEqual(decValues, [initialState, 1]);
   t.deepEqual(addValues, [initialState, 11]);
   t.deepEqual(setValues, [initialState, 100500]);
+  t.deepEqual(setDoubleValues, [initialState, 100500 * 2]);
   t.deepEqual(resetValues, [initialState, initialState]);
 });
