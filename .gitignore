@@ -5,3 +5,5 @@ node_modules
 *.log-*
 /packages/*/lib/*.js
 /packages/*/LICENSE.md
+.nyc_output
+coverage
