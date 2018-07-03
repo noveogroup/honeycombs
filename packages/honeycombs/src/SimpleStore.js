@@ -1,6 +1,8 @@
 /* @flow */
 
-export class SimpleStore<S> {
+export interface SimpleStoreLike<S> { getState(): S }
+
+export class SimpleStore<S> implements SimpleStoreLike<S> {
   static of<T>(initialState: T): SimpleStore<T> {
     return new SimpleStore(initialState);
   }

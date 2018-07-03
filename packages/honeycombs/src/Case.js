@@ -2,12 +2,12 @@
 
 import type { ObserverInterface, ObservableInterface } from 'es-observable';
 
-import { StateSubject } from './StateSubject';
-import { SimpleStore } from './SimpleStore';
 import { StoreObservable } from './StoreObservable';
+import { StateSubject } from './StateSubject';
+import { SimpleStore, type SimpleStoreLike } from './SimpleStore';
 
 export class Case<S, P> extends StoreObservable<S>
-  implements ObservableInterface<S>, ObserverInterface<P> {
+  implements ObservableInterface<S>, SimpleStoreLike<S>, ObserverInterface<P> {
   static from<ST, PT>(
     store: SimpleStore<ST>,
     mainSubject: StateSubject<ST>,
@@ -54,16 +54,19 @@ export class Case<S, P> extends StoreObservable<S>
     mainSubject: StateSubject<S>,
     handler: (state: S, payload: P) => S,
   ) {
-    super(store);
+    const subject = new StateSubject(store);
+    super(store, subject);
     this.#mainSubject = mainSubject;
     this.#handler = handler;
+    this.#store = store;
+    this.#subject = subject;
   }
 
   next(payload: P) {
     const handler = this.#handler;
-    const newState = this.#store.setState(
-      handler(this.#store.getState(), payload),
-    );
+    const store = this.#store;
+
+    const newState = store.setState(handler(store.getState(), payload));
     this.#subject.next(newState);
     this.#mainSubject.next(newState);
   }

@@ -5,17 +5,21 @@ import type { ObservableInterface } from 'es-observable';
 import { StoreObservable } from './StoreObservable';
 // eslint-disable-next-line no-unused-vars
 import { StateSubject } from './StateSubject';
-import { SimpleStore } from './SimpleStore';
+import { SimpleStore, type SimpleStoreLike } from './SimpleStore';
 import { Case } from './Case';
 
-class Store<S> extends StoreObservable<S> implements ObservableInterface<S> {
+class Store<S> extends StoreObservable<S>
+  implements ObservableInterface<S>, SimpleStoreLike<S> {
   #store /* : SimpleStore<S> */;
 
   #subject /* : StateSubject<S> */;
 
   constructor(initialState: S) {
     const store = SimpleStore.of(initialState);
-    super(store);
+    const subject = new StateSubject(store);
+    super(store, subject);
+    this.#store = store;
+    this.#subject = subject;
   }
 
   case<P>(handler: (state: S, payload: P) => S): Case<S, P> {

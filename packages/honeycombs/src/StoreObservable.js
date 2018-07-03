@@ -2,23 +2,24 @@
 
 import $$observable from 'symbol-observable';
 
-import {
+import type {
   Subscription,
-  type ObservableInterface,
-  type ObserverInterface,
+  ObservableInterface,
+  ObserverInterface,
 } from 'es-observable';
 
 import { StateSubject } from './StateSubject';
-import { SimpleStore } from './SimpleStore';
+import { SimpleStore, type SimpleStoreLike } from './SimpleStore';
 
-export class StoreObservable<S> implements ObservableInterface<S> {
+export class StoreObservable<S>
+  implements ObservableInterface<S>, SimpleStoreLike<S> {
   #store /* : SimpleStore<S> */;
 
   #subject /* : StateSubject<S> */;
 
-  constructor(store: SimpleStore<S>) {
+  constructor(store: SimpleStore<S>, subject: StateSubject<S>) {
     this.#store = store;
-    this.#subject = new StateSubject(store);
+    this.#subject = subject;
   }
 
   getState(): S {

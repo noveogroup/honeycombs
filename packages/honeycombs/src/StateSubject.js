@@ -1,6 +1,6 @@
 /* @flow */
 
-import { Subscription, type ObserverInterface } from 'es-observable';
+import type { Subscription, ObserverInterface } from 'es-observable';
 
 import { Subject } from './Subject';
 import { SimpleStore } from './SimpleStore';
