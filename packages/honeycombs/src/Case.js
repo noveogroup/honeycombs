@@ -1,5 +1,6 @@
 /* @flow */
 
+import $$observable from 'symbol-observable';
 import type { ObserverInterface, ObservableInterface } from 'es-observable';
 
 import { StoreObservable } from './StoreObservable';
@@ -11,7 +12,7 @@ export class Case<S, P> extends StoreObservable<S>
   static from<ST, PT>(
     store: SimpleStore<ST>,
     mainSubject: StateSubject<ST>,
-    handler: (state: ST, payload: PT) => ST,
+    handler: (state: ST, payload: PT) => ObservableInterface<ST> | ST,
   ): Case<ST, PT> {
     return new Case(store, mainSubject, handler);
   }
@@ -19,7 +20,7 @@ export class Case<S, P> extends StoreObservable<S>
   static payload<ST, PT>(
     store: SimpleStore<ST>,
     mainSubject: StateSubject<ST>,
-    handler: (payload: PT) => ST,
+    handler: (payload: PT) => ObservableInterface<ST> | ST,
   ): Case<ST, PT> {
     return Case.from(store, mainSubject, (_: ST, payload: PT) =>
       handler(payload),
@@ -47,12 +48,12 @@ export class Case<S, P> extends StoreObservable<S>
 
   #subject /* : StateSubject<S> */;
 
-  #handler /* : (state: S, payload: P) => S */;
+  #handler /* : (state: S, payload: P) => ObservableInterface<S> | S */;
 
   constructor(
     store: SimpleStore<S>,
     mainSubject: StateSubject<S>,
-    handler: (state: S, payload: P) => S,
+    handler: (state: S, payload: P) => ObservableInterface<S> | S,
   ) {
     const subject = new StateSubject(store);
     super(store, subject);
@@ -65,9 +66,38 @@ export class Case<S, P> extends StoreObservable<S>
   next(payload: P) {
     const handler = this.#handler;
     const store = this.#store;
+    const subject = this.#subject;
+    const mainSubject = this.#mainSubject;
 
-    const newState = store.setState(handler(store.getState(), payload));
-    this.#subject.next(newState);
-    this.#mainSubject.next(newState);
+    const result: ObservableInterface<S> | S = handler(
+      store.getState(),
+      payload,
+    );
+
+    // $FlowFixMe
+    if (typeof result[$$observable] == 'function') {
+      // $FlowFixMe
+      const observable: ObservableInterface<S> = result[$$observable]();
+
+      observable.subscribe(
+        value => {
+          const newState = store.setState(value);
+          subject.next(newState);
+          mainSubject.next(newState);
+        },
+        error => {
+          subject.error(error);
+          mainSubject.error(error);
+        },
+        () => {
+          subject.complete();
+          mainSubject.complete();
+        },
+      );
+    } else {
+      const newState = store.setState((result: any));
+      this.#subject.next(newState);
+      this.#mainSubject.next(newState);
+    }
   }
 }
