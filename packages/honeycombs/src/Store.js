@@ -23,12 +23,14 @@ class Store<S> extends StoreObservable<S>
   }
 
   case<P>(
-    handler: (state: S, payload: P) => ObservableInterface<S> | S,
+    handler: (state: S, payload: P) => ObservableInterface<S> | Promise<S> | S,
   ): Case<S, P> {
     return Case.from(this.#store, this.#subject, handler);
   }
 
-  payload<P>(handler: (payload: P) => ObservableInterface<S> | S): Case<S, P> {
+  payload<P>(
+    handler: (payload: P) => ObservableInterface<S> | Promise<S> | S,
+  ): Case<S, P> {
     return Case.payload(this.#store, this.#subject, handler);
   }
 

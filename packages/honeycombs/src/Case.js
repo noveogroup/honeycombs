@@ -12,7 +12,10 @@ export class Case<S, P> extends StoreObservable<S>
   static from<ST, PT>(
     store: SimpleStore<ST>,
     mainSubject: StateSubject<ST>,
-    handler: (state: ST, payload: PT) => ObservableInterface<ST> | ST,
+    handler: (
+      state: ST,
+      payload: PT,
+    ) => ObservableInterface<ST> | Promise<ST> | ST,
   ): Case<ST, PT> {
     return new Case(store, mainSubject, handler);
   }
@@ -20,7 +23,7 @@ export class Case<S, P> extends StoreObservable<S>
   static payload<ST, PT>(
     store: SimpleStore<ST>,
     mainSubject: StateSubject<ST>,
-    handler: (payload: PT) => ObservableInterface<ST> | ST,
+    handler: (payload: PT) => ObservableInterface<ST> | Promise<ST> | ST,
   ): Case<ST, PT> {
     return Case.from(store, mainSubject, (_: ST, payload: PT) =>
       handler(payload),
@@ -48,12 +51,12 @@ export class Case<S, P> extends StoreObservable<S>
 
   #subject /* : StateSubject<S> */;
 
-  #handler /* : (state: S, payload: P) => ObservableInterface<S> | S */;
+  #handler /* : (state: S, payload: P) => ObservableInterface<S> | Promise<S> | S */;
 
   constructor(
     store: SimpleStore<S>,
     mainSubject: StateSubject<S>,
-    handler: (state: S, payload: P) => ObservableInterface<S> | S,
+    handler: (state: S, payload: P) => ObservableInterface<S> | Promise<S> | S,
   ) {
     const subject = new StateSubject(store);
     super(store, subject);
@@ -69,7 +72,7 @@ export class Case<S, P> extends StoreObservable<S>
     const subject = this.#subject;
     const mainSubject = this.#mainSubject;
 
-    const result: ObservableInterface<S> | S = handler(
+    const result: ObservableInterface<S> | Promise<S> | S = handler(
       store.getState(),
       payload,
     );
@@ -92,6 +95,19 @@ export class Case<S, P> extends StoreObservable<S>
         () => {
           subject.complete();
           mainSubject.complete();
+        },
+      );
+      // $FlowFixMe
+    } else if (typeof result.then == 'function') {
+      result.then(
+        value => {
+          const newState = store.setState(value);
+          subject.next(newState);
+          mainSubject.next(newState);
+        },
+        error => {
+          subject.error(error);
+          mainSubject.error(error);
         },
       );
     } else {
