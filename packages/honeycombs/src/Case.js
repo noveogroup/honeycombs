@@ -34,7 +34,7 @@ export class Case<S, P> extends StoreObservable<S>
     return Case.from(store, mainSubject, () => payload);
   }
 
-  static just<ST>(
+  static set<ST>(
     store: SimpleStore<ST>,
     mainSubject: StateSubject<ST>,
   ): Case<ST, ST> {

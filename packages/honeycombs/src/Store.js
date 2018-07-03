@@ -30,8 +30,8 @@ class Store<S> extends StoreObservable<S> implements ObservableInterface<S> {
     return Case.always(this.#store, this.#subject, payload);
   }
 
-  just(): Case<S, S> {
-    return Case.just(this.#store, this.#subject);
+  set(): Case<S, S> {
+    return Case.set(this.#store, this.#subject);
   }
 }
 
