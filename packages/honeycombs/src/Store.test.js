@@ -7,6 +7,7 @@ import { Observable } from 'es-observable';
 import { reduce } from 'es-observable/src/reduce';
 
 import { of } from './Store';
+import { Case } from './Case';
 import { Subject } from './Subject';
 
 const completeSubject = new Subject();
@@ -25,15 +26,16 @@ test('Store', async t => {
 
   t.is(counter.getState(), 0);
 
-  const inc = counter.case(state => state + 1);
-
-  const dec = counter.case(async state => state - 1);
-
-  const add = counter.case((state, payload) => state + payload);
-
-  const set = counter.set();
-  const setDouble = counter.payload(payload => Observable.of(payload * 2));
-  const reset = counter.always(initialState);
+  const inc: Case<number, void> = counter.state(state => state + 1);
+  const dec: Case<number, void> = counter.state(state => state - 1);
+  const add: Case<number, number> = counter.case(payload => async state =>
+    state + payload,
+  );
+  const set: Case<number, number> = counter.set();
+  const setDouble: Case<number, number> = counter.case(payload =>
+    Observable.of(payload * 2),
+  );
+  const reset: Case<number, void> = counter.always(initialState);
 
   const storeObservable = createObservable(counter);
   const incObservable = createObservable(inc);

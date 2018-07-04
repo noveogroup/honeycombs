@@ -1,34 +1,34 @@
 /* @flow */
 
-import $$observable from 'symbol-observable';
 import type { ObserverInterface, ObservableInterface } from 'es-observable';
 
 import { StoreObservable } from './StoreObservable';
 import { StateSubject } from './StateSubject';
-import { Queue } from './Queue';
+import { Queue, type Task } from './Queue';
 import type { SimpleStoreLike } from './SimpleStore';
+
+export type Handler<S, P> = P =>
+  | ObservableInterface<Task<S> | S>
+  | Promise<Task<S> | S>
+  | Task<S>
+  | S;
 
 export class Case<S, P> extends StoreObservable<S>
   implements ObservableInterface<S>, SimpleStoreLike<S>, ObserverInterface<P> {
   static from<ST, PT>(
     queue: Queue<ST>,
     mainSubject: StateSubject<ST>,
-    handler: (
-      state: ST,
-      payload: PT,
-    ) => ObservableInterface<ST> | Promise<ST> | ST,
+    handler: Handler<ST, PT>,
   ): Case<ST, PT> {
     return new Case(queue, mainSubject, handler);
   }
 
-  static payload<ST, PT>(
+  static state<ST>(
     queue: Queue<ST>,
     mainSubject: StateSubject<ST>,
-    handler: (payload: PT) => ObservableInterface<ST> | Promise<ST> | ST,
-  ): Case<ST, PT> {
-    return Case.from(queue, mainSubject, (_: ST, payload: PT) =>
-      handler(payload),
-    );
+    handler: Task<S>,
+  ): Case<ST, void> {
+    return new Case(queue, mainSubject, () => handler);
   }
 
   static always<ST>(
@@ -36,14 +36,15 @@ export class Case<S, P> extends StoreObservable<S>
     mainSubject: StateSubject<ST>,
     payload: ST,
   ): Case<ST, void> {
-    return Case.from(queue, mainSubject, () => payload);
+    const always = (): ST => payload;
+    return Case.from(queue, mainSubject, () => always);
   }
 
   static set<ST>(
     queue: Queue<ST>,
     mainSubject: StateSubject<ST>,
   ): Case<ST, ST> {
-    return Case.from(queue, mainSubject, (_, payload: ST) => payload);
+    return Case.from(queue, mainSubject, (payload: ST) => payload);
   }
 
   #queue /* : Queue<S> */;
@@ -52,7 +53,7 @@ export class Case<S, P> extends StoreObservable<S>
 
   #subject /* : StateSubject<S> */;
 
-  #handler /* : (state: S, payload: P) => ObservableInterface<S> | Promise<S> | S */;
+  #handler /* : Handler<S, P> */;
 
   #next /* : (S) => void */;
 
@@ -61,7 +62,7 @@ export class Case<S, P> extends StoreObservable<S>
   constructor(
     queue: Queue<S>,
     mainSubject: StateSubject<S>,
-    handler: (state: S, payload: P) => ObservableInterface<S> | Promise<S> | S,
+    handler: Handler<S, P>,
   ) {
     const store = queue.getStore();
     const subject = new StateSubject(store);
@@ -85,38 +86,6 @@ export class Case<S, P> extends StoreObservable<S>
 
   next(payload: P) {
     const handler = this.#handler;
-    const next = this.#next;
-    const error = this.#error;
-
-    this.#queue.run(
-      state =>
-        new Promise(resolve => {
-          const result: ObservableInterface<S> | Promise<S> | S = handler(
-            state,
-            payload,
-          );
-
-          // $FlowFixMe
-          if (typeof result[$$observable] == 'function') {
-            // $FlowFixMe
-            const observable: ObservableInterface<S> = result[$$observable]();
-
-            observable.subscribe(
-              next,
-              err => {
-                error(err);
-                resolve();
-              },
-              resolve,
-            );
-            // $FlowFixMe
-          } else if (typeof result.then == 'function') {
-            result.then(next, error).then(resolve);
-          } else {
-            next((result: any));
-            resolve();
-          }
-        }),
-    );
+    this.#queue.handle(handler(payload), this.#next, this.#error);
   }
 }

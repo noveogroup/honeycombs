@@ -6,8 +6,8 @@ import { StoreObservable } from './StoreObservable';
 // eslint-disable-next-line no-unused-vars
 import { StateSubject } from './StateSubject';
 import { SimpleStore, type SimpleStoreLike } from './SimpleStore';
-import { Queue } from './Queue';
-import { Case } from './Case';
+import { Queue, type Task } from './Queue';
+import { Case, type Handler } from './Case';
 
 class Store<S> extends StoreObservable<S>
   implements ObservableInterface<S>, SimpleStoreLike<S> {
@@ -24,16 +24,12 @@ class Store<S> extends StoreObservable<S>
     this.#queue = queue;
   }
 
-  case<P>(
-    handler: (state: S, payload: P) => ObservableInterface<S> | Promise<S> | S,
-  ): Case<S, P> {
+  case<P>(handler: Handler<S, P>): Case<S, P> {
     return Case.from(this.#queue, this.#subject, handler);
   }
 
-  payload<P>(
-    handler: (payload: P) => ObservableInterface<S> | Promise<S> | S,
-  ): Case<S, P> {
-    return Case.payload(this.#queue, this.#subject, handler);
+  state(handler: Task<S>): Case<S, void> {
+    return Case.state(this.#queue, this.#subject, handler);
   }
 
   always(payload: S): Case<S, void> {
