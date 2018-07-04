@@ -54,13 +54,9 @@ export class Case<S, P> extends StoreObservable<S>
 
   #handler /* : (state: S, payload: P) => ObservableInterface<S> | Promise<S> | S */;
 
-  #getState /* : () => S */;
-
   #next /* : (S) => void */;
 
   #error /* : (Error) => void */;
-
-  #complete /* : () => void */;
 
   constructor(
     queue: Queue<S>,
@@ -73,7 +69,6 @@ export class Case<S, P> extends StoreObservable<S>
     this.#mainSubject = mainSubject;
     this.#handler = handler;
     this.#subject = subject;
-    this.#getState = () => store.getState();
     this.#queue = queue;
 
     this.#next = (newState: S) => {
