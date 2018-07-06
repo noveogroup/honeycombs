@@ -14,7 +14,7 @@ import {
   type PromiseSetter,
   type ObservableSetter,
 } from './Queue';
-import { Case } from './Case';
+import { Bee } from './Bee';
 
 class Honeycomb<S> extends StoreObservable<S>
   implements ObservableInterface<S>, StoreLike<S> {
@@ -55,46 +55,42 @@ class Honeycomb<S> extends StoreObservable<S>
     };
   }
 
-  case<P>(handler: PayloadHandler<S, P>): Case<S, P> {
+  case<P>(handler: PayloadHandler<S, P>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next } = createCaseEmitters();
-    return new Case(store, caseSubject, queue.case(handler, next));
+    return new Bee(store, caseSubject, queue.case(handler, next));
   }
 
-  fromPromise<P>(handler: PayloadPromiseHandler<S, P>): Case<S, P> {
+  fromPromise<P>(handler: PayloadPromiseHandler<S, P>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
-    return new Case(
-      store,
-      caseSubject,
-      queue.fromPromise(handler, next, error),
-    );
+    return new Bee(store, caseSubject, queue.fromPromise(handler, next, error));
   }
 
-  fromObservable<P>(handler: PayloadObservableHandler<S, P>): Case<S, P> {
+  fromObservable<P>(handler: PayloadObservableHandler<S, P>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
-    return new Case(
+    return new Bee(
       store,
       caseSubject,
       queue.fromObservable(handler, next, error),
     );
   }
 
-  awaitPromise<P>(handler: PromiseSetter<S, P>): Case<S, P> {
+  awaitPromise<P>(handler: PromiseSetter<S, P>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
-    return new Case(
+    return new Bee(
       store,
       caseSubject,
       queue.awaitPromise(handler, next, error),
     );
   }
 
-  awaitObservable<P>(handler: ObservableSetter<S, P>): Case<S, P> {
+  awaitObservable<P>(handler: ObservableSetter<S, P>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
-    return new Case(
+    return new Bee(
       store,
       caseSubject,
       queue.awaitObservable(handler, next, error),

@@ -7,7 +7,7 @@ import { StateSubject } from './StateSubject';
 import { type Runner } from './Queue';
 import { Store, type StoreLike } from './Store';
 
-export class Case<S, P> extends StoreObservable<S>
+export class Bee<S, P> extends StoreObservable<S>
   implements ObservableInterface<S>, StoreLike<S>, ObserverInterface<P> {
   #run /* : Runner<P> */;
 
