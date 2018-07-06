@@ -55,7 +55,9 @@ class Honeycomb<S> extends StoreObservable<S>
     };
   }
 
-  /* :: +bee: <P>(handler: PayloadHandler<S, P>) => Bee<S, P>; */
+  bee<P>(handler: PayloadHandler<S, P>): Bee<S, P> {
+    return this.case(handler);
+  }
 
   case<P>(handler: PayloadHandler<S, P>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
@@ -63,7 +65,9 @@ class Honeycomb<S> extends StoreObservable<S>
     return new Bee(store, caseSubject, queue.case(handler, next));
   }
 
-  /* :: +willBee: <P>(handler: PayloadPromiseHandler<S, P>) => Bee<S, P>; */
+  willBee<P>(handler: PayloadPromiseHandler<S, P>): Bee<S, P> {
+    return this.fromPromise(handler);
+  }
 
   fromPromise<P>(handler: PayloadPromiseHandler<S, P>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
@@ -71,7 +75,9 @@ class Honeycomb<S> extends StoreObservable<S>
     return new Bee(store, caseSubject, queue.fromPromise(handler, next, error));
   }
 
-  /* :: +willBees: <P>(handler: PayloadObservableHandler<S, P>) => Bee<S, P>; */
+  willBees<P>(handler: PayloadObservableHandler<S, P>): Bee<S, P> {
+    return this.fromObservable(handler);
+  }
 
   fromObservable<P>(handler: PayloadObservableHandler<S, P>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
@@ -83,7 +89,9 @@ class Honeycomb<S> extends StoreObservable<S>
     );
   }
 
-  /* :: +awaitBee: <P>(handler: PromiseSetter<S, P>) => Bee<S, P>; */
+  awaitBee<P>(handler: PromiseSetter<S, P>): Bee<S, P> {
+    return this.awaitPromise(handler);
+  }
 
   awaitPromise<P>(handler: PromiseSetter<S, P>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
@@ -95,7 +103,9 @@ class Honeycomb<S> extends StoreObservable<S>
     );
   }
 
-  /* :: +awaitBees: <P>(handler: ObservableSetter<S, P>) => Bee<S, P>; */
+  awaitBees<P>(handler: ObservableSetter<S, P>): Bee<S, P> {
+    return this.awaitObservable(handler);
+  }
 
   awaitObservable<P>(handler: ObservableSetter<S, P>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
@@ -107,14 +117,6 @@ class Honeycomb<S> extends StoreObservable<S>
     );
   }
 }
-
-Object.assign((Honeycomb.prototype: any), {
-  bee: Honeycomb.prototype.case,
-  willBee: Honeycomb.prototype.fromPromise,
-  willBees: Honeycomb.prototype.fromObservable,
-  awaitBee: Honeycomb.prototype.awaitPromise,
-  awaitBees: Honeycomb.prototype.awaitObservable,
-});
 
 export type { Honeycomb };
 
