@@ -28,6 +28,7 @@ rules:
   eqeqeq: [error, smart]
   no-dupe-keys: error
   no-return-assign: off
+  consistent-return: off
 
   import/prefer-default-export: off
 
