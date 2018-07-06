@@ -1,10 +1,10 @@
 /* @flow */
 
-export interface SimpleStoreLike<S> { getState(): S }
+export interface StoreLike<S> { getState(): S }
 
-export class SimpleStore<S> implements SimpleStoreLike<S> {
-  static of<T>(initialState: T): SimpleStore<T> {
-    return new SimpleStore(initialState);
+export class Store<S> implements StoreLike<S> {
+  static of<T>(initialState: T): Store<T> {
+    return new Store(initialState);
   }
 
   #state /* : S */;

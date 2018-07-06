@@ -5,7 +5,7 @@ import type { ObservableInterface } from 'es-observable';
 import { StoreObservable } from './StoreObservable';
 // eslint-disable-next-line no-unused-vars
 import { StateSubject } from './StateSubject';
-import { SimpleStore, type SimpleStoreLike } from './SimpleStore';
+import { Store, type StoreLike } from './Store';
 import {
   Queue,
   type PayloadHandler,
@@ -17,17 +17,17 @@ import {
 import { Case } from './Case';
 
 class Honeycomb<S> extends StoreObservable<S>
-  implements ObservableInterface<S>, SimpleStoreLike<S> {
+  implements ObservableInterface<S>, StoreLike<S> {
   #queue /* : Queue<S> */;
 
-  #store /* : SimpleStore<S> */;
+  #store /* : Store<S> */;
 
   #mainSubject /* : StateSubject<S> */;
 
   #createCaseEmitters /* : () => * */;
 
   constructor(initialState: S) {
-    const store = SimpleStore.of(initialState);
+    const store = Store.of(initialState);
     const mainSubject = new StateSubject(store);
     const queue = new Queue(store);
     super(store, mainSubject);

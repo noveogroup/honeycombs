@@ -9,15 +9,15 @@ import type {
 } from 'es-observable';
 
 import { StateSubject } from './StateSubject';
-import { SimpleStore, type SimpleStoreLike } from './SimpleStore';
+import { Store, type StoreLike } from './Store';
 
 export class StoreObservable<S>
-  implements ObservableInterface<S>, SimpleStoreLike<S> {
-  #store /* : SimpleStore<S> */;
+  implements ObservableInterface<S>, StoreLike<S> {
+  #store /* : Store<S> */;
 
   #subject /* : StateSubject<S> */;
 
-  constructor(store: SimpleStore<S>, subject: StateSubject<S>) {
+  constructor(store: Store<S>, subject: StateSubject<S>) {
     this.#store = store;
     this.#subject = subject;
   }

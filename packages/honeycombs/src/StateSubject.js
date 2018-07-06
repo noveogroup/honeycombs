@@ -3,12 +3,12 @@
 import type { Subscription, ObserverInterface } from 'es-observable';
 
 import { Subject } from './Subject';
-import { SimpleStore } from './SimpleStore';
+import { Store } from './Store';
 
 export class StateSubject<S> extends Subject<S> {
-  #store /* : SimpleStore<S> */;
+  #store /* : Store<S> */;
 
-  constructor(store: SimpleStore<S>) {
+  constructor(store: Store<S>) {
     super();
     this.#store = store;
   }

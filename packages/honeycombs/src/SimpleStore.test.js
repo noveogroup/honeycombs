@@ -3,10 +3,10 @@
 
 import test from 'ava';
 
-import { SimpleStore } from './SimpleStore';
+import { Store } from './Store';
 
-test('SimpleStore', t => {
-  const store = SimpleStore.of(1);
+test('Store', t => {
+  const store = Store.of(1);
 
   t.is(store.getState(), 1);
   t.is(store.setState(2), 2);

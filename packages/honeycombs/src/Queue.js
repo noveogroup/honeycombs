@@ -3,7 +3,7 @@
 import $$observable from 'symbol-observable';
 import type { ObservableInterface } from 'es-observable';
 
-import { SimpleStore } from './SimpleStore';
+import { Store } from './Store';
 
 export type Task<S> = S => ObservableInterface<S> | Promise<S> | S;
 
@@ -19,14 +19,14 @@ type AddTask<S> = (Res<S>) => void;
 
 export type Runner<P> = (payload: P) => void;
 
-const getState = <S>(store: SimpleStore<S>): S => store.getState();
+const getState = <S>(store: Store<S>): S => store.getState();
 
 export class Queue<S> {
-  /* :: +getStore: () => SimpleStore<S>; */
+  /* :: +getStore: () => Store<S>; */
 
-  #queue /* : Promise<SimpleStore<S>> */;
+  #queue /* : Promise<Store<S>> */;
 
-  constructor(store: SimpleStore<S>) {
+  constructor(store: Store<S>) {
     this.#queue = Promise.resolve(store);
     this.getStore = () => store;
   }
