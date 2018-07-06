@@ -55,17 +55,23 @@ class Honeycomb<S> extends StoreObservable<S>
     };
   }
 
+  /* :: +bee: <P>(handler: PayloadHandler<S, P>) => Bee<S, P>; */
+
   case<P>(handler: PayloadHandler<S, P>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next } = createCaseEmitters();
     return new Bee(store, caseSubject, queue.case(handler, next));
   }
 
+  /* :: +fromPromise: <P>(handler: PayloadPromiseHandler<S, P>) => Bee<S, P>; */
+
   fromPromise<P>(handler: PayloadPromiseHandler<S, P>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
     return new Bee(store, caseSubject, queue.fromPromise(handler, next, error));
   }
+
+  /* :: +fromObservable: <P>(handler: PayloadObservableHandler<S, P>) => Bee<S, P>; */
 
   fromObservable<P>(handler: PayloadObservableHandler<S, P>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
@@ -77,6 +83,8 @@ class Honeycomb<S> extends StoreObservable<S>
     );
   }
 
+  /* :: +awaitPromise: <P>(handler: PromiseSetter<S, P>) => Bee<S, P>; */
+
   awaitPromise<P>(handler: PromiseSetter<S, P>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
@@ -86,6 +94,8 @@ class Honeycomb<S> extends StoreObservable<S>
       queue.awaitPromise(handler, next, error),
     );
   }
+
+  /* :: +awaitObservable: <P>(handler: ObservableSetter<S, P>) => Bee<S, P>; */
 
   awaitObservable<P>(handler: ObservableSetter<S, P>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
@@ -97,6 +107,14 @@ class Honeycomb<S> extends StoreObservable<S>
     );
   }
 }
+
+Object.assign((Honeycomb.prototype: any), {
+  bee: Honeycomb.prototype.case,
+  willBee: Honeycomb.prototype.fromPromise,
+  willBees: Honeycomb.prototype.fromObservable,
+  awaitBee: Honeycomb.prototype.awaitPromise,
+  awaitBees: Honeycomb.prototype.awaitObservable,
+});
 
 export type { Honeycomb };
 
