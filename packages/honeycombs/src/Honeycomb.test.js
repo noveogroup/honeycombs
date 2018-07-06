@@ -6,7 +6,7 @@ import test from 'ava';
 import { Observable } from 'es-observable';
 import { reduce } from 'es-observable/src/reduce';
 
-import { of } from './Store';
+import { of } from './Honeycomb';
 import { Subject } from './Subject';
 
 const createObservable = (target, completeSubject = new Subject()) => ({

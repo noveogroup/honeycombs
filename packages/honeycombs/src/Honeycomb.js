@@ -16,7 +16,7 @@ import {
 } from './Queue';
 import { Case } from './Case';
 
-class Store<S> extends StoreObservable<S>
+class Honeycomb<S> extends StoreObservable<S>
   implements ObservableInterface<S>, SimpleStoreLike<S> {
   #queue /* : Queue<S> */;
 
@@ -102,8 +102,8 @@ class Store<S> extends StoreObservable<S>
   }
 }
 
-export type { Store };
+export type { Honeycomb };
 
-export function of<T>(initialState: T): Store<T> {
-  return new Store(initialState);
+export function of<T>(initialState: T): Honeycomb<T> {
+  return new Honeycomb(initialState);
 }

@@ -1,3 +1,3 @@
 /* @flow */
 
-export * from './Store';
+export * from './Honeycomb';
