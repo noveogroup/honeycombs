@@ -6,38 +6,99 @@ import { StoreObservable } from './StoreObservable';
 // eslint-disable-next-line no-unused-vars
 import { StateSubject } from './StateSubject';
 import { SimpleStore, type SimpleStoreLike } from './SimpleStore';
-import { Queue, type Task } from './Queue';
-import { Case, type Handler } from './Case';
+import {
+  Queue,
+  type PayloadHandler,
+  type PayloadPromiseHandler,
+  type PayloadObservableHandler,
+  type PromiseSetter,
+  type ObservableSetter,
+} from './Queue';
+import { Case } from './Case';
 
 class Store<S> extends StoreObservable<S>
   implements ObservableInterface<S>, SimpleStoreLike<S> {
   #queue /* : Queue<S> */;
 
-  #subject /* : StateSubject<S> */;
+  #store /* : SimpleStore<S> */;
+
+  #mainSubject /* : StateSubject<S> */;
+
+  #createCaseEmitters /* : () => * */;
 
   constructor(initialState: S) {
     const store = SimpleStore.of(initialState);
-    const subject = new StateSubject(store);
+    const mainSubject = new StateSubject(store);
     const queue = new Queue(store);
-    super(store, subject);
-    this.#subject = subject;
+    super(store, mainSubject);
+    this.#mainSubject = mainSubject;
     this.#queue = queue;
+    this.#store = store;
+
+    this.#createCaseEmitters = () => {
+      const caseSubject: StateSubject<S> = new StateSubject(store);
+
+      return {
+        queue,
+        store,
+        caseSubject,
+        next(newState: S) {
+          store.setState(newState);
+          caseSubject.next(newState);
+          mainSubject.next(newState);
+        },
+        error(err: Error) {
+          caseSubject.error(err);
+          mainSubject.error(err);
+        },
+      };
+    };
   }
 
-  case<P>(handler: Handler<S, P>): Case<S, P> {
-    return Case.from(this.#queue, this.#subject, handler);
+  case<P>(handler: PayloadHandler<S, P>): Case<S, P> {
+    const createCaseEmitters = this.#createCaseEmitters;
+    const { queue, store, caseSubject, next } = createCaseEmitters();
+    return new Case(store, caseSubject, queue.case(handler, next));
   }
 
-  state(handler: Task<S>): Case<S, void> {
-    return Case.state(this.#queue, this.#subject, handler);
+  fromPromise<P>(handler: PayloadPromiseHandler<S, P>): Case<S, P> {
+    const createCaseEmitters = this.#createCaseEmitters;
+    const { queue, store, caseSubject, next, error } = createCaseEmitters();
+    return new Case(
+      store,
+      caseSubject,
+      queue.fromPromise(handler, next, error),
+    );
   }
 
-  always(payload: S): Case<S, void> {
-    return Case.always(this.#queue, this.#subject, payload);
+  fromObservable<P>(handler: PayloadObservableHandler<S, P>): Case<S, P> {
+    const createCaseEmitters = this.#createCaseEmitters;
+    const { queue, store, caseSubject, next, error } = createCaseEmitters();
+    return new Case(
+      store,
+      caseSubject,
+      queue.fromObservable(handler, next, error),
+    );
   }
 
-  set(): Case<S, S> {
-    return Case.set(this.#queue, this.#subject);
+  awaitPromise<P>(handler: PromiseSetter<S, P>): Case<S, P> {
+    const createCaseEmitters = this.#createCaseEmitters;
+    const { queue, store, caseSubject, next, error } = createCaseEmitters();
+    return new Case(
+      store,
+      caseSubject,
+      queue.awaitPromise(handler, next, error),
+    );
+  }
+
+  awaitObservable<P>(handler: ObservableSetter<S, P>): Case<S, P> {
+    const createCaseEmitters = this.#createCaseEmitters;
+    const { queue, store, caseSubject, next, error } = createCaseEmitters();
+    return new Case(
+      store,
+      caseSubject,
+      queue.awaitObservable(handler, next, error),
+    );
   }
 }
 

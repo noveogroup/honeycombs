@@ -5,7 +5,19 @@ import type { ObservableInterface } from 'es-observable';
 
 import { SimpleStore } from './SimpleStore';
 
-export type Task<S> = (state: S) => ObservableInterface<S> | Promise<S> | S;
+export type Task<S> = S => ObservableInterface<S> | Promise<S> | S;
+
+type Res<S> = (S => S) | S;
+
+export type PayloadHandler<S, P> = P => Res<S>;
+export type PayloadPromiseHandler<S, P> = P => Promise<Res<S>>;
+export type PayloadObservableHandler<S, P> = P => ObservableInterface<Res<S>>;
+export type PromiseSetter<S, P> = (S, P) => Promise<S>;
+export type ObservableSetter<S, P> = (S, P) => ObservableInterface<S>;
+
+type AddTask<S> = (Res<S>) => void;
+
+export type Runner<P> = (payload: P) => void;
 
 const getState = <S>(store: SimpleStore<S>): S => store.getState();
 
@@ -26,69 +38,69 @@ export class Queue<S> {
       .then(this.getStore);
   }
 
-  createTaskSender(
-    next: S => void,
-    error: Error => void,
-  ): (stateHandler: Task<S> | S) => void {
-    return stateHandler =>
-      typeof stateHandler == 'function'
-        ? this.addTask(stateHandler, next, error)
-        : this.run(() => next(stateHandler));
+  createParallelRunner(next: S => void): AddTask<S> {
+    return (newState: Res<S>) =>
+      this.run((prevState: S) =>
+        next(typeof newState == 'function' ? newState(prevState) : newState),
+      );
   }
 
-  addTask(task: Task<S>, next: S => void, error: Error => void) {
-    this.run(async (state: S) => {
-      const result: ObservableInterface<S> | Promise<S> | S = task(state);
-
-      // $FlowFixMe
-      if (result && typeof result[$$observable] == 'function') {
-        const observable: ObservableInterface<S> = result
-          // $FlowFixMe
-          [$$observable]();
-
-        await new Promise(resolve =>
-          observable.subscribe(
-            next,
-            err => {
-              error(err);
-              resolve();
-            },
-            resolve,
-          ),
-        );
-
-        // $FlowFixMe
-      } else if (result && typeof result.then == 'function') {
-        await result.then(next, error);
-      } else {
-        next((result: any));
-      }
-    });
+  case<P>(handler: PayloadHandler<S, P>, next: S => void) {
+    const run = this.createParallelRunner(next);
+    return (payload: P) => {
+      Promise.resolve(handler(payload)).then(run);
+    };
   }
 
-  handle(
-    payload:
-      | ObservableInterface<Task<S> | S>
-      | Promise<Task<S> | S>
-      | Task<S>
-      | S,
+  fromPromise<P>(
+    handler: PayloadPromiseHandler<S, P>,
     next: S => void,
     error: Error => void,
   ) {
-    // $FlowFixMe
-    if (payload && typeof payload[$$observable] == 'function') {
-      // $FlowFixMe
-      payload[$$observable]().subscribe(
-        this.createTaskSender(next, error),
-        error,
+    const run = this.createParallelRunner(next);
+    return (payload: P) => {
+      handler(payload).then(run, error);
+    };
+  }
+
+  fromObservable<P>(
+    handler: PayloadObservableHandler<S, P>,
+    next: S => void,
+    error: Error => void,
+  ) {
+    const run = this.createParallelRunner(next);
+    return (payload: P) => {
+      Promise.resolve(handler(payload)).then(result => {
+        // $FlowFixMe
+        const observable: typeof result = result[$$observable]();
+        observable.subscribe(v => run(v), error);
+      });
+    };
+  }
+
+  awaitPromise<P>(
+    handler: PromiseSetter<S, P>,
+    next: S => void,
+    error: Error => void,
+  ) {
+    return (payload: P): void =>
+      this.run(prevState => handler(prevState, payload).then(next, error));
+  }
+
+  awaitObservable<P>(
+    handler: ObservableSetter<S, P>,
+    next: S => void,
+    error: Error => void,
+  ) {
+    return (payload: P): void =>
+      this.run(prevState =>
+        Promise.resolve(handler(prevState, payload)).then(result => {
+          // $FlowFixMe
+          const observable: typeof result = result[$$observable]();
+          return new Promise(resolve =>
+            observable.subscribe(next, error, resolve),
+          );
+        }),
       );
-      // $FlowFixMe
-    } else if (payload && typeof payload.then == 'function') {
-      (payload: any).then(this.createTaskSender(next, error), error);
-    } else if (typeof payload == 'function') {
-      this.addTask(payload, next, error);
-    } else {
-      this.run(() => next((payload: any)));
-    }
   }
 }
