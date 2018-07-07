@@ -11,7 +11,7 @@ export interface SubscriptionInterface<T> extends SubscriberSubscription<T> {
   get closed(): boolean;
 }
 
-export interface ObservableInterface<T> {
+export interface ObservableInterface<+T> {
   +subscribe: ((
     next: (T) => void,
     error?: (Error) => void,

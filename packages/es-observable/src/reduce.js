@@ -15,7 +15,7 @@ export const reduce = <T>(
         reject(error);
       },
       complete() {
-        resolve(acc);
+        resolve([...acc]);
       },
     });
   });
