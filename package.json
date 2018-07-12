@@ -3,8 +3,7 @@
   "private": true,
   "scripts": {
     "build": "rollup -c",
-    "prepublish": "yarn build",
-    "publish": "lerna publish",
+    "release": "lerna publish --skip-npm --yes",
     "test": "nyc ava",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint ."
