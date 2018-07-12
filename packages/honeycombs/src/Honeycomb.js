@@ -1,7 +1,8 @@
 /* @flow */
 
-import type { ObservableInterface } from 'es-observable';
+import { Observable, type ObservableInterface } from 'es-observable';
 
+import { map } from './map';
 import { StoreObservable } from './StoreObservable';
 // eslint-disable-next-line no-unused-vars
 import { StateSubject } from './StateSubject';
@@ -15,6 +16,17 @@ import {
   type ObservableSetter,
 } from './Queue';
 import { Bee } from './Bee';
+
+export type ActionsSpec<S> = {
+  [string]: Bee<S, any>,
+};
+
+export type GetNextType<S> = <B: Bee<S, any>>(B) => $PropertyType<B, 'next'>;
+
+export type StateObject<S, SP: ActionsSpec<S>> = {|
+  ...$Exact<$ObjMap<SP, GetNextType<S>>>,
+  state: S,
+|};
 
 class Honeycomb<S> extends StoreObservable<S>
   implements ObservableInterface<S>, StoreLike<S> {
@@ -115,6 +127,20 @@ class Honeycomb<S> extends StoreObservable<S>
       caseSubject,
       queue.awaitObservable(handler, next, error),
     );
+  }
+
+  createStoreObservable<SP: ActionsSpec<S>>(
+    bees: SP,
+  ): Observable<StateObject<S, SP>> {
+    const methods = Object.entries(bees).reduce(
+      (acc, [key, bee]: [string, any]) => {
+        acc[key] = value => bee.next(value);
+        return acc;
+      },
+      {},
+    );
+
+    return map((state: S) => ({ ...methods, state }), this);
   }
 }
 
