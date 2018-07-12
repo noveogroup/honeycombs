@@ -6,7 +6,8 @@
     "release": "lerna publish --skip-npm --yes",
     "test": "nyc ava",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "flow": "flow"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.53",
