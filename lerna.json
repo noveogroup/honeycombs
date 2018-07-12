@@ -1,6 +1,9 @@
 {
   "lerna": "3.0.0-beta.21",
   "npmClient": "yarn",
+  "publish": {
+    "allowBranch": "master"
+  },
   "packages": [
     "packages/*"
   ],
