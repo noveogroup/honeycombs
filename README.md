@@ -1,9 +1,9 @@
 # Honeycombs
 
-WIP. Observable finite-state machine.
+WIP. Observable state manager.
 
 ## Packages
 
 - [`es-observable`](/packages/es-observable) — ES Observable implementation
-
-- [`Honeycombs`](/packages/honeycombs) — FSM
+- [`honeycombs`](/packages/honeycombs) — State manager
+- [`react-honeycombs`](/packages/react-honeycombs) — Honeycombs React bindings

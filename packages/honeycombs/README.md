@@ -1,3 +1,3 @@
 # Honeycombs
 
-WIP. Observable finite-state machine.
+WIP. Observable state manager.
