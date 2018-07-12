@@ -20,15 +20,15 @@ const createObservable = (target, completeSubject = new Subject()) => ({
   }),
 });
 
+const inc = value => value + 1;
+const dec = value => value - 1;
+
 test('Store', async t => {
   const completeSubject = new Subject();
 
   const counter = of(0);
 
   t.is(counter.getState(), 0);
-
-  const inc = value => value + 1;
-  const dec = value => value - 1;
 
   const increment = counter.case(() => inc);
   const decrement = counter.fromPromise(async () => dec);
@@ -130,4 +130,40 @@ test('Store blocking execution', async t => {
   setTimeout(complete, 500);
 
   t.deepEqual(await reduce(observable), [0, 1, 2, 3, 1, 2, 3]);
+});
+
+test('Store observable', async t => {
+  const completeSubject = new Subject();
+
+  const counter = of(0);
+
+  const increment = counter.case(() => inc);
+  const decrement = counter.case(() => dec);
+
+  const observable = counter.createStoreObservable({ increment, decrement });
+
+  const state = await new Promise(resolve => observable.subscribe(resolve));
+
+  state.increment();
+  state.increment();
+  state.increment();
+  state.decrement();
+  state.decrement();
+
+  setTimeout(() => completeSubject.complete(), 0);
+
+  const [values, states] = await Promise.all([
+    reduce(createObservable(counter, completeSubject).observable),
+    reduce(createObservable(observable, completeSubject).observable),
+  ]);
+
+  t.deepEqual(values, [0, 1, 2, 3, 2, 1]);
+  t.deepEqual(
+    states,
+    [0, 1, 2, 3, 2, 1].map(value => ({
+      state: value,
+      increment: state.increment,
+      decrement: state.decrement,
+    })),
+  );
 });
