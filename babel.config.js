@@ -19,7 +19,6 @@ module.exports = {
         },
         modules: false,
         useBuiltIns: 'usage',
-        loose: true,
       },
     ],
   ],
