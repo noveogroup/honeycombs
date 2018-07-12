@@ -1,0 +1,41 @@
+{
+  "name": "react-honeycombs",
+  "version": "1.0.0-beta.1",
+  "description": "Honeycombs React bindings",
+  "main": "lib/index.js",
+  "bugs": {
+    "url": "https://github.com/bigslycat/honeycombs/issues",
+    "email": "me@stupidcat.wtf"
+  },
+  "repository": "bigslycat/honeycombs",
+  "homepage": "https://github.com/bigslycat/honeycombs/packages/react-honeycombs",
+  "contributors": [
+    "Pavel Tereschenko <me@stupidcat.wtf> (https://github.com/bigslycat)",
+    "Timofey Kuzmin <tkuzmin@gmail.com> (https://github.com/tkuzmin)"
+  ],
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "core-js": "^2.5.7",
+    "es-observable": "1.0.0-beta.1",
+    "honeycombs": "1.0.0-beta.1",
+    "symbol-observable": "^1.2.0"
+  },
+  "peerDependencies": {
+    "react": "^16.4.1"
+  },
+  "files": [
+    "README.md",
+    "LICENSE.md",
+    "lib",
+    "src"
+  ],
+  "keywords": [
+    "Observable",
+    "FSM",
+    "finite-state machine",
+    "store",
+    "state",
+    "state manager"
+  ]
+}
