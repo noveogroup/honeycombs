@@ -1,6 +1,6 @@
 {
   "name": "es-observable",
-  "version": "1.0.0-beta.8",
+  "version": "1.0.0-beta.9",
   "description": "ES Observable implementation",
   "main": "lib/index.js",
   "bugs": {
