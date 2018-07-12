@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "build": "rollup -c",
+    "prepublish": "yarn build",
     "test": "nyc ava",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint ."
