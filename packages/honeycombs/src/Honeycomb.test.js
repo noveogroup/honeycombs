@@ -28,9 +28,10 @@ test('Store', async t => {
   t.is(counter.getState(), 0);
 
   const inc = value => value + 1;
+  const dec = value => value - 1;
 
   const increment = counter.case(() => inc);
-  const decrement = counter.fromPromise(async () => state => state - 1);
+  const decrement = counter.fromPromise(async () => dec);
   const add = counter.fromObservable(payload =>
     Observable.of(state => state + payload),
   );
