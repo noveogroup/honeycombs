@@ -45,7 +45,20 @@ export default readdir(packages).then(
             format: 'cjs',
             banner: getBanner(packageJSON),
           },
-          plugins: [babel(), nodeResolve(), commonjs()],
+          plugins: [
+            babel(),
+            nodeResolve(),
+            commonjs({
+              include: resolvePath('node_modules/react/**'),
+              namedExports: {
+                [resolvePath('node_modules/react/index.js')]: [
+                  'createContext',
+                  'createElement',
+                  'PureComponent',
+                ],
+              },
+            }),
+          ],
           external: getExternal(Object.keys(packageJSON.dependencies)),
         };
       }),
