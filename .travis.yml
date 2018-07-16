@@ -15,7 +15,7 @@ jobs:
     - stage: Tests
       script: yarn test
     - stage: npm release
-      if: tag =~ ^v AND branch = master
+      if: tag =~ ^v
       before_script: yarn build
       script: npx lerna exec npm publish
 
