@@ -3,28 +3,16 @@
 
 import test from 'ava';
 
-import { Observable } from 'es-observable';
-import { reduce } from 'es-observable/src/reduce';
+import { Observable } from '../../es-observable/src';
+import { reduce } from '../../es-observable/src/reduce';
 
 import { of } from './Honeycomb';
-import { Subject } from './Subject';
-
-const createObservable = (target, completeSubject = new Subject()) => ({
-  complete() {
-    completeSubject.complete();
-  },
-  observable: new Observable(observer => {
-    target.subscribe(observer);
-    completeSubject.subscribe(observer);
-    return () => {};
-  }),
-});
-
-const inc = value => value + 1;
-const dec = value => value - 1;
+import { createClosingObservable } from './createClosingObservable';
 
 test('Store', async t => {
-  const completeSubject = new Subject();
+  const { complete, createObservable } = createClosingObservable();
+  const inc = value => value + 1;
+  const dec = value => value - 1;
 
   const counter = of(0);
 
@@ -38,23 +26,11 @@ test('Store', async t => {
 
   const increment3 = counter.fromObservable(() => Observable.of(inc, inc, inc));
 
-  const { observable: storeObservable } = createObservable(
-    counter,
-    completeSubject,
-  );
-  const { observable: incObservable } = createObservable(
-    increment,
-    completeSubject,
-  );
-  const { observable: decObservable } = createObservable(
-    decrement,
-    completeSubject,
-  );
-  const { observable: addObservable } = createObservable(add, completeSubject);
-  const { observable: inc3Observable } = createObservable(
-    increment3,
-    completeSubject,
-  );
+  const storeObservable = createObservable(counter);
+  const incObservable = createObservable(increment);
+  const decObservable = createObservable(decrement);
+  const addObservable = createObservable(add);
+  const inc3Observable = createObservable(increment3);
 
   increment.next();
   increment.next();
@@ -63,7 +39,7 @@ test('Store', async t => {
   add.next(10);
   increment3.next();
 
-  setTimeout(() => completeSubject.complete(), 0);
+  setTimeout(complete, 0);
 
   const [
     storeValues,
@@ -86,28 +62,24 @@ test('Store', async t => {
   t.deepEqual(inc3Values, [0, 13, 14, 15]);
 });
 
-const createQueue = (): Observable<number> =>
-  new Observable(observer => {
-    const values = [1, 2, 3].reverse();
-
-    const interval = setInterval(() => {
-      const value = values.pop();
-
-      if (value != null) return observer.next(value);
-
-      observer.complete();
-      clearInterval(interval);
-    }, 20);
-
-    return () => clearInterval(interval);
-  });
-
 test('Store non-blocking execution', async t => {
+  const createQueue = (): Observable<number> =>
+    new Observable(observer => {
+      const values = [1, 2, 3].reverse();
+      const interval = setInterval(() => {
+        const value = values.pop();
+        if (value != null) return observer.next(value);
+        observer.complete();
+        clearInterval(interval);
+      }, 20);
+      return () => clearInterval(interval);
+    });
+  const { complete, createObservable } = createClosingObservable();
   const counter = of(0);
   const run1 = counter.fromObservable(createQueue);
   const run2 = counter.fromObservable(createQueue);
 
-  const { observable, complete } = createObservable(counter);
+  const observable = createObservable(counter);
 
   run1.next();
   run2.next();
@@ -118,11 +90,23 @@ test('Store non-blocking execution', async t => {
 });
 
 test('Store blocking execution', async t => {
+  const createQueue = (): Observable<number> =>
+    new Observable(observer => {
+      const values = [1, 2, 3].reverse();
+      const interval = setInterval(() => {
+        const value = values.pop();
+        if (value != null) return observer.next(value);
+        observer.complete();
+        clearInterval(interval);
+      }, 20);
+      return () => clearInterval(interval);
+    });
+  const { complete, createObservable } = createClosingObservable();
   const counter = of(0);
   const run1 = counter.awaitObservable(createQueue);
   const run2 = counter.awaitObservable(createQueue);
 
-  const { observable, complete } = createObservable(counter);
+  const observable = createObservable(counter);
 
   run1.next();
   run2.next();
@@ -133,7 +117,9 @@ test('Store blocking execution', async t => {
 });
 
 test('Store observable', async t => {
-  const completeSubject = new Subject();
+  const { complete, createObservable } = createClosingObservable();
+  const inc = value => value + 1;
+  const dec = value => value - 1;
 
   const counter = of(0);
 
@@ -150,11 +136,11 @@ test('Store observable', async t => {
   state.decrement();
   state.decrement();
 
-  setTimeout(() => completeSubject.complete(), 0);
+  setTimeout(complete, 0);
 
   const [values, states] = await Promise.all([
-    reduce(createObservable(counter, completeSubject).observable),
-    reduce(createObservable(observable, completeSubject).observable),
+    reduce(createObservable(counter)),
+    reduce(createObservable(observable)),
   ]);
 
   t.deepEqual(values, [0, 1, 2, 3, 2, 1]);

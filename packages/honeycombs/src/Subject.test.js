@@ -3,7 +3,7 @@
 
 import test from 'ava';
 
-import { reduce } from 'es-observable/src/reduce';
+import { reduce } from '../../es-observable/src/reduce';
 
 import { Subject } from './Subject';
 
