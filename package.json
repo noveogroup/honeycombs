@@ -4,7 +4,8 @@
   "scripts": {
     "build": "rollup -c",
     "release": "lerna publish --skip-npm --yes",
-    "test": "nyc ava",
+    "pretest": "yarn build",
+    "test": "nyc ava --verbose",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint .",
     "flow": "flow"

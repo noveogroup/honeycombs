@@ -1,10 +1,9 @@
 language: node_js
-stages:
 
 node_js:
   - '10'
+
 before_script:
-  - yarn install
   - npx lerna bootstrap
 
 jobs:
@@ -16,7 +15,7 @@ jobs:
     - stage: Tests
       script: yarn test
     - stage: npm release
-      if: (tag =~ ^v) AND (branch = master)
+      if: tag =~ ^v AND branch = master
       before_script: yarn build
       script: npx lerna exec npm publish
 
