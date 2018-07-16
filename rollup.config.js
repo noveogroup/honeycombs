@@ -45,21 +45,13 @@ export default readdir(packages).then(
             format: 'cjs',
             banner: getBanner(packageJSON),
           },
-          plugins: [
-            babel(),
-            nodeResolve(),
-            commonjs({
-              include: resolvePath('node_modules/react/**'),
-              namedExports: {
-                [resolvePath('node_modules/react/index.js')]: [
-                  'createContext',
-                  'createElement',
-                  'PureComponent',
-                ],
-              },
+          plugins: [babel(), nodeResolve(), commonjs()],
+          external: getExternal(
+            Object.keys({
+              ...packageJSON.dependencies,
+              ...packageJSON.peerDependencies,
             }),
-          ],
-          external: getExternal(Object.keys(packageJSON.dependencies)),
+          ),
         };
       }),
     ),
