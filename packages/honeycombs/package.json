@@ -1,6 +1,6 @@
 {
   "name": "honeycombs",
-  "version": "1.0.0-beta.10",
+  "version": "1.0.0-beta.11",
   "description": "Observable finite-state machine",
   "main": "lib/index.js",
   "bugs": {
@@ -17,7 +17,7 @@
   "private": false,
   "dependencies": {
     "core-js": "^2.5.7",
-    "es-observable": "^1.0.0-beta.10",
+    "es-observable": "^1.0.0-beta.11",
     "symbol-observable": "^1.2.0"
   },
   "files": [
