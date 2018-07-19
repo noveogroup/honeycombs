@@ -77,6 +77,14 @@ class Honeycomb<S> extends StoreObservable<S>
     return new Bee(store, caseSubject, queue.case(handler, next));
   }
 
+  always(payload: S): Bee<S, void> {
+    return this.case(() => payload);
+  }
+
+  just(): Bee<S, S> {
+    return this.case(payload => payload);
+  }
+
   willBee<P>(handler: PayloadPromiseHandler<S, P>): Bee<S, P> {
     return this.fromPromise(handler);
   }
