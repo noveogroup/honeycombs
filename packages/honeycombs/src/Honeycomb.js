@@ -135,7 +135,7 @@ class Honeycomb<S> extends StoreObservable<S>
   createStoreObservable<SP: ActionsSpec<S>>(
     bees: SP,
   ): Observable<{|
-    ...$Exact<$ObjMap<ActionsSpec<S>, GetNextType<S>>>,
+    ...$Exact<$ObjMap<SP, GetNextType<S>>>,
     state: S,
   |}> {
     const methods = Object.entries(bees).reduce(
