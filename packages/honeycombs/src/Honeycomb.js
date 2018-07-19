@@ -23,11 +23,6 @@ export type ActionsSpec<S> = {
 
 export type GetNextType<S> = <B: Bee<S, any>>(B) => $PropertyType<B, 'next'>;
 
-export type StateObject<S, SP: ActionsSpec<S>> = {|
-  ...$Exact<$ObjMap<SP, GetNextType<S>>>,
-  state: S,
-|};
-
 class Honeycomb<S> extends StoreObservable<S>
   implements ObservableInterface<S>, StoreLike<S> {
   #queue /* : Queue<S> */;
@@ -139,7 +134,10 @@ class Honeycomb<S> extends StoreObservable<S>
 
   createStoreObservable<SP: ActionsSpec<S>>(
     bees: SP,
-  ): Observable<StateObject<S, SP>> {
+  ): Observable<{|
+    ...$Exact<$ObjMap<ActionsSpec<S>, GetNextType<S>>>,
+    state: S,
+  |}> {
     const methods = Object.entries(bees).reduce(
       (acc, [key, bee]: [string, any]) => {
         acc[key] = value => bee.next(value);
