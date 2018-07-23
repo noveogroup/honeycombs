@@ -3,15 +3,24 @@
 import * as React from 'react';
 import {
   Observable,
-  type ObservableInterface,
+  type ObserverInterface,
   // eslint-disable-next-line no-unused-vars
-  type SubscriptionInterface,
+  type SubscriberSubscription,
   type SubscriptionObserver,
 } from 'es-observable';
 
 export type HOC<P, R> = (
   Component: React$ComponentType<P>,
 ) => React$ComponentType<R>;
+
+interface ObservableInterface<T> {
+  +subscribe: ((
+    next: (T) => void,
+    error?: (Error) => void,
+    complete?: () => void,
+  ) => SubscriberSubscription<T>) &
+    ((observer: ObserverInterface<T>) => SubscriberSubscription<T>);
+}
 
 export type ObservableTransform<P, R> = (
   propsObservable: Observable<P>,
@@ -29,7 +38,7 @@ export const mapPropsStream = <P: {}, R: {}>(
     propsObservers: Set<SubscriptionObserver<P>>;
     propsObservable: Observable<P>;
     stateObservable: ObservableInterface<R>;
-    subscription: SubscriptionInterface<R>;
+    subscription: SubscriberSubscription<R>;
     */
 
     constructor(props, context) {
