@@ -3,24 +3,16 @@
 import * as React from 'react';
 import {
   Observable,
-  type ObserverInterface,
   // eslint-disable-next-line no-unused-vars
   type SubscriberSubscription,
   type SubscriptionObserver,
 } from 'es-observable';
 
+import type { ObservableInterface } from './types';
+
 export type HOC<P, R> = (
   Component: React$ComponentType<P>,
 ) => React$ComponentType<R>;
-
-interface ObservableInterface<T> {
-  +subscribe: ((
-    next: (T) => void,
-    error?: (Error) => void,
-    complete?: () => void,
-  ) => SubscriberSubscription<T>) &
-    ((observer: ObserverInterface<T>) => SubscriberSubscription<T>);
-}
 
 export type ObservableTransform<P, R> = (
   propsObservable: Observable<P>,

@@ -1,11 +1,10 @@
 /* @flow */
 
 import * as React from 'react';
-import {
-  type ObservableInterface,
-  // eslint-disable-next-line no-unused-vars
-  type SubscriptionInterface,
-} from 'es-observable';
+// eslint-disable-next-line no-unused-vars
+import { type SubscriberSubscription } from 'es-observable';
+
+import type { ObservableInterface } from './types';
 
 type Props<T> = {|
   observable: ObservableInterface<T>,
@@ -22,7 +21,7 @@ export const createObservableContext = <T>(): {|
   } = React.createContext();
 
   class Provider extends React.PureComponent<Props<T>, {| value: T |}> {
-    /* :: subscription: SubscriptionInterface<T>; */
+    /* :: subscription: SubscriberSubscription<T>; */
 
     componentDidMount() {
       this.subscribe();
