@@ -55,6 +55,7 @@ export const createObservableContext = <T>(): {|
     }
 
     render() {
+      if (!this.state) return null;
       const { children } = this.props;
       const { value } = this.state;
       return <ReactProvider value={value}>{children}</ReactProvider>;
