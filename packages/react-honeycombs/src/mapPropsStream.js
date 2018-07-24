@@ -36,6 +36,8 @@ export const mapPropsStream = <P: {}, R: {}>(
     constructor(props, context) {
       super(props, context);
 
+      this.propsObservers = new Set();
+
       this.propsObservable = new Observable(subscriptionObserver => {
         this.propsObservers.add(subscriptionObserver);
         return () => {
