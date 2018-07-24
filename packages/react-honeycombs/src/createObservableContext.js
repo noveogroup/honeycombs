@@ -23,6 +23,12 @@ export const createObservableContext = <T>(): {|
   class Provider extends React.PureComponent<Props<T>, {| value: T |}> {
     /* :: subscription: SubscriberSubscription<T>; */
 
+    updateObserver = {
+      next: (value: T): void => {
+        this.setState({ value });
+      },
+    };
+
     componentDidMount() {
       this.subscribe();
     }
@@ -42,12 +48,7 @@ export const createObservableContext = <T>(): {|
 
     subscribe() {
       const { observable } = this.props;
-
-      this.subscription = observable.subscribe(
-        (value: T): void => {
-          this.setState({ value });
-        },
-      );
+      this.subscription = observable.subscribe(this.updateObserver);
     }
 
     unsubscribe() {
