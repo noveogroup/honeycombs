@@ -19,6 +19,7 @@ export type ObservableTransform<P, R> = (
 ) => ObservableInterface<R>;
 
 function callNext<T>(observer: SubscriptionObserver<T>) {
+  console.log(observer, this);
   observer.next(this);
 }
 
@@ -31,12 +32,19 @@ export const mapPropsStream = <P: {}, R: {}>(
     propsObservable: Observable<P>;
     stateObservable: ObservableInterface<R>;
     subscription: SubscriberSubscription<R>;
+    updateObserver: {| next(R): void |};
     */
 
     constructor(props, context) {
       super(props, context);
 
       this.propsObservers = new Set();
+
+      this.updateObserver = {
+        next: (value: R) => {
+          this.setState(value);
+        },
+      };
 
       this.propsObservable = new Observable(subscriptionObserver => {
         this.propsObservers.add(subscriptionObserver);
@@ -61,12 +69,7 @@ export const mapPropsStream = <P: {}, R: {}>(
     }
 
     subscribe() {
-      this.subscription = this.stateObservable.subscribe(
-        (value: R): void => {
-          this.setState(value);
-        },
-      );
-
+      this.subscription = this.stateObservable.subscribe(this.updateObserver);
       this.pushProps(this.props);
     }
 
@@ -80,6 +83,7 @@ export const mapPropsStream = <P: {}, R: {}>(
     }
 
     render() {
+      console.log(this.state);
       return this.state && <Component {...this.state} />;
     }
   };
