@@ -19,7 +19,6 @@ export type ObservableTransform<P, R> = (
 ) => ObservableInterface<R>;
 
 function callNext<T>(observer: SubscriptionObserver<T>) {
-  console.log(observer, this);
   observer.next(this);
 }
 
@@ -83,7 +82,6 @@ export const mapPropsStream = <P: {}, R: {}>(
     }
 
     render() {
-      console.log(this.state);
       return this.state && <Component {...this.state} />;
     }
   };
