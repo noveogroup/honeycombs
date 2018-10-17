@@ -7,16 +7,6 @@ import { Store } from './Store';
 
 export type Task<S> = S => ObservableInterface<S> | Promise<S> | S;
 
-type Res<S> = (S => S) | S;
-
-export type PayloadHandler<S, P> = P => Res<S>;
-export type PayloadPromiseHandler<S, P> = P => Promise<Res<S>>;
-export type PayloadObservableHandler<S, P> = P => ObservableInterface<Res<S>>;
-export type PromiseSetter<S, P> = (S, P) => Promise<S>;
-export type ObservableSetter<S, P> = (S, P) => ObservableInterface<S>;
-
-type AddTask<S> = (Res<S>) => void;
-
 export type Runner<P> = (payload: P) => void;
 
 const getState = <S>(store: Store<S>): S => store.getState();
@@ -38,14 +28,14 @@ export class Queue<S> {
       .then(this.getStore);
   }
 
-  createParallelRunner(next: S => void): AddTask<S> {
-    return (newState: Res<S>) =>
+  createParallelRunner(next: S => void): ((S => S) | S) => void {
+    return (newState: (S => S) | S) =>
       this.run((prevState: S) =>
         next(typeof newState == 'function' ? newState(prevState) : newState),
       );
   }
 
-  case<P>(handler: PayloadHandler<S, P>, next: S => void) {
+  case<P>(handler: P => (S => S) | S, next: S => void) {
     const run = this.createParallelRunner(next);
     return (payload: P) => {
       Promise.resolve(handler(payload)).then(run);
@@ -53,7 +43,7 @@ export class Queue<S> {
   }
 
   fromPromise<P>(
-    handler: PayloadPromiseHandler<S, P>,
+    handler: P => Promise<(S => S) | S>,
     next: S => void,
     error: Error => void,
   ) {
@@ -64,7 +54,7 @@ export class Queue<S> {
   }
 
   fromObservable<P>(
-    handler: PayloadObservableHandler<S, P>,
+    handler: P => ObservableInterface<(S => S) | S>,
     next: S => void,
     error: Error => void,
   ) {
@@ -79,7 +69,7 @@ export class Queue<S> {
   }
 
   awaitPromise<P>(
-    handler: PromiseSetter<S, P>,
+    handler: (S, P) => Promise<S>,
     next: S => void,
     error: Error => void,
   ) {
@@ -88,7 +78,7 @@ export class Queue<S> {
   }
 
   awaitObservable<P>(
-    handler: ObservableSetter<S, P>,
+    handler: (S, P) => ObservableInterface<S>,
     next: S => void,
     error: Error => void,
   ) {

@@ -7,14 +7,7 @@ import { StoreObservable } from './StoreObservable';
 // eslint-disable-next-line no-unused-vars
 import { StateSubject } from './StateSubject';
 import { Store, type StoreLike } from './Store';
-import {
-  Queue,
-  type PayloadHandler,
-  type PayloadPromiseHandler,
-  type PayloadObservableHandler,
-  type PromiseSetter,
-  type ObservableSetter,
-} from './Queue';
+import { Queue } from './Queue';
 import { Bee } from './Bee';
 
 export type ActionsSpec<S> = {
@@ -62,11 +55,11 @@ class Honeycomb<S> extends StoreObservable<S>
     };
   }
 
-  bee<P>(handler: PayloadHandler<S, P>): Bee<S, P> {
+  bee<P>(handler: P => (S => S) | S): Bee<S, P> {
     return this.case(handler);
   }
 
-  case<P>(handler: PayloadHandler<S, P>): Bee<S, P> {
+  case<P>(handler: P => (S => S) | S): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next } = createCaseEmitters();
     return new Bee(store, caseSubject, queue.case(handler, next));
@@ -80,21 +73,23 @@ class Honeycomb<S> extends StoreObservable<S>
     return this.case(payload => payload);
   }
 
-  willBee<P>(handler: PayloadPromiseHandler<S, P>): Bee<S, P> {
+  willBee<P>(handler: P => Promise<(S => S) | S>): Bee<S, P> {
     return this.fromPromise(handler);
   }
 
-  fromPromise<P>(handler: PayloadPromiseHandler<S, P>): Bee<S, P> {
+  fromPromise<P>(handler: P => Promise<(S => S) | S>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
     return new Bee(store, caseSubject, queue.fromPromise(handler, next, error));
   }
 
-  willBees<P>(handler: PayloadObservableHandler<S, P>): Bee<S, P> {
+  willBees<P>(handler: P => ObservableInterface<(S => S) | S>): Bee<S, P> {
     return this.fromObservable(handler);
   }
 
-  fromObservable<P>(handler: PayloadObservableHandler<S, P>): Bee<S, P> {
+  fromObservable<P>(
+    handler: P => ObservableInterface<(S => S) | S>,
+  ): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
     return new Bee(
@@ -104,11 +99,11 @@ class Honeycomb<S> extends StoreObservable<S>
     );
   }
 
-  awaitBee<P>(handler: PromiseSetter<S, P>): Bee<S, P> {
+  awaitBee<P>(handler: (S, P) => Promise<S>): Bee<S, P> {
     return this.awaitPromise(handler);
   }
 
-  awaitPromise<P>(handler: PromiseSetter<S, P>): Bee<S, P> {
+  awaitPromise<P>(handler: (S, P) => Promise<S>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
     return new Bee(
@@ -118,11 +113,11 @@ class Honeycomb<S> extends StoreObservable<S>
     );
   }
 
-  awaitBees<P>(handler: ObservableSetter<S, P>): Bee<S, P> {
+  awaitBees<P>(handler: (S, P) => ObservableInterface<S>): Bee<S, P> {
     return this.awaitObservable(handler);
   }
 
-  awaitObservable<P>(handler: ObservableSetter<S, P>): Bee<S, P> {
+  awaitObservable<P>(handler: (S, P) => ObservableInterface<S>): Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
     return new Bee(
