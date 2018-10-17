@@ -5,7 +5,17 @@
 core-js@^2.5.7:
   version "2.5.7"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.5.7.tgz#f972608ff0cead68b841a16a932d0b183791814e"
+  integrity sha512-RszJCAxg/PP6uzXVXL6BsxSXx/B05oJAQ2vkJRjyjrEcNVycaqOmNb5OTxZPE3xa5gwZduqza6L9JOCenh/Ecw==
+
+es-observable@^1.0.0-beta.22:
+  version "1.0.0-beta.22"
+  resolved "https://registry.yarnpkg.com/es-observable/-/es-observable-1.0.0-beta.22.tgz#13ac43b5b6f4a0fa1292fb2ef242a6cebb15e2f0"
+  integrity sha512-IwEAo7XLwcEt9ktG8BqMZiKqK/dtCIqRCJ36QflbfNZQC7BJJDkgc3/6DndnJws709kUWPDLEkOmzF+q2rQcRg==
+  dependencies:
+    core-js "^2.5.7"
+    symbol-observable "^1.2.0"
 
 symbol-observable@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
+  integrity sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==

@@ -14,7 +14,6 @@
     "Timofey Kuzmin <tkuzmin@gmail.com> (https://github.com/tkuzmin)"
   ],
   "license": "MIT",
-  "private": false,
   "dependencies": {
     "core-js": "^2.5.7",
     "es-observable": "^1.0.0-beta.22",
