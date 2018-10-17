@@ -1,8 +1,6 @@
 /* @flow */
 
-import testOptions from './babel.config';
-
 export default {
-  require: ['@babel/register', 'esm'],
-  babel: { testOptions },
+  require: ['esm', '@babel/register'],
+  babel: { testOptions: { babelrc: true } },
 };
