@@ -58,13 +58,14 @@ import * as hc from 'honeycombs';
 `Honeycomb` is `Observable`. You can to subscribe to store using method `subscribe`:
 
 `honeycomb.subscribe(next [, error, complete] ): Subscription`
+
 `honeycomb.subscribe(observer): Subscription`
 
 `Observer` is object with optional methods:
 
-`observer.next(newState)`
-`observer.error(Error)`
-`observer.complete()`
+- `observer.next(newState)`
+- `observer.error(Error)`
+- `observer.complete()`
 
 `Subscription` is object with method `unsubscribe()`;
 
