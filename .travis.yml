@@ -12,8 +12,6 @@ jobs:
       script: yarn lint
     - stage: Flow
       script: yarn flow
-    - stage: Tests
-      script: yarn test
     - stage: npm release
       if: tag =~ ^v
       before_script: yarn build
