@@ -4,9 +4,6 @@ node_js:
   - '10'
 
 before_script:
-  - cp .npmrc.dist packages/es-observable/.npmrc
-  - cp .npmrc.dist packages/honeycombs/.npmrc
-  - cp .npmrc.dist packages/react-honeycombs/.npmrc
   - npx lerna bootstrap
 
 jobs:
@@ -19,6 +16,10 @@ jobs:
       script: yarn test
     - stage: npm release
       if: tag =~ ^v
-      before_script: yarn build
+      before_script:
+        - cp .npmrc.dist packages/es-observable/.npmrc
+        - cp .npmrc.dist packages/honeycombs/.npmrc
+        - cp .npmrc.dist packages/react-honeycombs/.npmrc
+        - yarn build
       script: npx lerna exec npm publish
 
