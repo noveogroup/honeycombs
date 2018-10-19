@@ -18,7 +18,7 @@ test('Store', async t => {
 
   t.is(counter.getState(), 0);
 
-  const increment = counter.case(() => inc);
+  const increment = counter.transform(inc);
   const decrement = counter.fromPromise(async () => dec);
   const add = counter.fromObservable(payload =>
     Observable.of(state => state + payload),
@@ -32,12 +32,12 @@ test('Store', async t => {
   const addObservable = createObservable(add);
   const inc3Observable = createObservable(increment3);
 
-  increment.next();
-  increment.next();
-  increment.next();
-  decrement.next();
-  add.next(10);
-  increment3.next();
+  increment();
+  increment();
+  increment();
+  decrement();
+  add(10);
+  increment3();
 
   setTimeout(complete, 0);
 
@@ -81,8 +81,8 @@ test('Store non-blocking execution', async t => {
 
   const observable = createObservable(counter);
 
-  run1.next();
-  run2.next();
+  run1();
+  run2();
 
   setTimeout(complete, 500);
 
@@ -108,8 +108,8 @@ test('Store blocking execution', async t => {
 
   const observable = createObservable(counter);
 
-  run1.next();
-  run2.next();
+  run1();
+  run2();
 
   setTimeout(complete, 500);
 
@@ -118,13 +118,11 @@ test('Store blocking execution', async t => {
 
 test('Store observable', async t => {
   const { complete, createObservable } = createClosingObservable();
-  const inc = value => value + 1;
-  const dec = value => value - 1;
 
   const counter = of(0);
 
-  const increment = counter.case(() => inc);
-  const decrement = counter.case(() => dec);
+  const increment = counter.transform(value => value + 1);
+  const decrement = counter.transform(value => value - 1);
 
   const observable = counter.createStoreObservable({ increment, decrement });
 
