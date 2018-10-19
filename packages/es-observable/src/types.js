@@ -36,6 +36,12 @@ export interface ObserverInterface<T> {
   +complete?: void | (() => void);
 }
 
+export type ObserverLike<T> = {
+  +next?: (value: T) => void,
+  +error?: (errorValue: Error) => void,
+  +complete?: () => void,
+};
+
 export interface SubscriptionObserverInterface<T> {
   next(value: T): void;
   error(errorValue: Error): void;
