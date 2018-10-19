@@ -1,6 +1,6 @@
 {
   "name": "react-honeycombs",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Honeycombs React bindings",
   "main": "lib/index.js",
   "bugs": {
@@ -16,8 +16,8 @@
   "license": "MIT",
   "dependencies": {
     "core-js": "^2.5.7",
-    "es-observable": "^1.0.2",
-    "honeycombs": "^1.0.2",
+    "es-observable": "^1.0.3",
+    "honeycombs": "^1.0.3",
     "symbol-observable": "^1.2.0"
   },
   "peerDependencies": {
