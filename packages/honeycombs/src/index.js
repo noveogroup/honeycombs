@@ -1,6 +1,6 @@
 /* @flow */
 
-import { Bee } from './Bee';
+import type { Bee } from './Bee';
 
 export * from './Honeycomb';
 
