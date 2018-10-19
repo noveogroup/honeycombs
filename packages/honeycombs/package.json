@@ -1,7 +1,7 @@
 {
   "name": "honeycombs",
   "version": "1.0.0-beta.22",
-  "description": "Observable finite-state machine",
+  "description": "State manager with built-in side-effects",
   "main": "lib/index.js",
   "bugs": {
     "url": "https://github.com/bigslycat/honeycombs/issues",

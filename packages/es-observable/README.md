@@ -1,3 +1,3 @@
 # es-observable
 
-WIP. ES Observable implementation
+ES Observable implementation.

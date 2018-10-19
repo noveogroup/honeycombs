@@ -1,6 +1,6 @@
 # Honeycombs
 
-WIP. Observable state manager.
+State manager with built-in side-effects.
 
 ## Packages
 
