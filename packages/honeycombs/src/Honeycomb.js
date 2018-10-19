@@ -65,6 +65,10 @@ class Honeycomb<S> extends StoreObservable<S>
     return bee.of(store, caseSubject, queue.case(handler, next));
   }
 
+  transform(handler: S => S): bee.Bee<S, void> {
+    return this.case(() => handler);
+  }
+
   always(payload: S): bee.Bee<S, void> {
     return this.case(() => payload);
   }
