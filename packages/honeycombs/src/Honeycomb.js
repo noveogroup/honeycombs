@@ -61,39 +61,27 @@ class Honeycomb<S> extends StoreObservable<S>
   }
 
   apply<P>(handler: P => (S => S) | S): bee.Bee<S, P> {
-    return this.case(handler);
-  }
-
-  case<P>(handler: P => (S => S) | S): bee.Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next } = createCaseEmitters();
     return bee.of(store, caseSubject, queue.case(handler, next));
   }
 
   transform(handler: S => S): bee.Bee<S, void> {
-    return this.case(() => handler);
+    return this.apply(() => handler);
   }
 
   always(payload: S): bee.Bee<S, void> {
-    return this.case(() => payload);
+    return this.apply(() => payload);
   }
 
   just(): bee.Bee<S, S> {
-    return this.case(payload => payload);
-  }
-
-  willBee<P>(handler: P => Promise<(S => S) | S>): Bee<S, P> {
-    return this.fromPromise(handler);
+    return this.apply(payload => payload);
   }
 
   fromPromise<P>(handler: P => Promise<(S => S) | S>): bee.Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
     return bee.of(store, caseSubject, queue.fromPromise(handler, next, error));
-  }
-
-  willBees<P>(handler: P => ObservableInterface<(S => S) | S>): Bee<S, P> {
-    return this.fromObservable(handler);
   }
 
   fromObservable<P>(handler: P => ObservableLike<(S => S) | S>): bee.Bee<S, P> {
@@ -106,18 +94,10 @@ class Honeycomb<S> extends StoreObservable<S>
     );
   }
 
-  awaitBee<P>(handler: (S, P) => Promise<S>): Bee<S, P> {
-    return this.awaitPromise(handler);
-  }
-
   awaitPromise<P>(handler: (S, P) => Promise<S>): bee.Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
     return bee.of(store, caseSubject, queue.awaitPromise(handler, next, error));
-  }
-
-  awaitBees<P>(handler: (S, P) => ObservableInterface<S>): Bee<S, P> {
-    return this.awaitObservable(handler);
   }
 
   awaitObservable<P>(handler: (S, P) => ObservableLike<S>): bee.Bee<S, P> {
