@@ -4,6 +4,9 @@ node_js:
   - '10'
 
 before_script:
+  - cp .npmrc.dist packages/es-observable/.npmrc
+  - cp .npmrc.dist packages/honeycombs/.npmrc
+  - cp .npmrc.dist packages/react-honeycombs/.npmrc
   - npx lerna bootstrap
 
 jobs:
