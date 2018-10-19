@@ -1305,9 +1305,9 @@
     "@most/prelude" "^1.4.0"
 
 "@most/prelude@^1.4.0":
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/@most/prelude/-/prelude-1.7.1.tgz#7c70ab6a68bb20481db51ebfbba23fceb502d239"
-  integrity sha512-2JsW7OArYnndGcXPSjIx9uwmSTCHByb+7WRmOhrOYM9N5GK5KMsX4APKxET73+zc1ZUqEj2yAPwYis72xJXIEQ==
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/@most/prelude/-/prelude-1.7.2.tgz#be4ed406518d4c8c220e45c39fa7251365425b73"
+  integrity sha512-GM5ec7+xpkuXiCMyzhyENgH/xZ8t0nAMDBY0QOsVVD6TrZYjJKUnW1eaI18HHX8W+COWMwWR9c0zoPiBp9+tUg==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
