@@ -1,11 +1,9 @@
 /* @flow */
 
 import $$observable from 'symbol-observable';
-import type { ObservableInterface } from 'es-observable';
+import type { ObservableLike } from 'es-observable';
 
 import { Store } from './Store';
-
-export type Task<S> = S => ObservableInterface<S> | Promise<S> | S;
 
 export type Runner<P> = (payload: P) => void;
 
@@ -54,7 +52,7 @@ export class Queue<S> {
   }
 
   fromObservable<P>(
-    handler: P => ObservableInterface<(S => S) | S>,
+    handler: P => ObservableLike<(S => S) | S>,
     next: S => void,
     error: Error => void,
   ) {
@@ -78,7 +76,7 @@ export class Queue<S> {
   }
 
   awaitObservable<P>(
-    handler: (S, P) => ObservableInterface<S>,
+    handler: (S, P) => ObservableLike<S>,
     next: S => void,
     error: Error => void,
   ) {

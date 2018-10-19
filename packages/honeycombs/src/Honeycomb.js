@@ -55,21 +55,21 @@ class Honeycomb<S> extends StoreObservable<S>
     };
   }
 
-  bee<P>(handler: P => (S => S) | S): Bee<S, P> {
+  apply<P>(handler: P => (S => S) | S): bee.Bee<S, P> {
     return this.case(handler);
   }
 
-  case<P>(handler: P => (S => S) | S): Bee<S, P> {
+  case<P>(handler: P => (S => S) | S): bee.Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next } = createCaseEmitters();
-    return new Bee(store, caseSubject, queue.case(handler, next));
+    return bee.of(store, caseSubject, queue.case(handler, next));
   }
 
-  always(payload: S): Bee<S, void> {
+  always(payload: S): bee.Bee<S, void> {
     return this.case(() => payload);
   }
 
-  just(): Bee<S, S> {
+  just(): bee.Bee<S, S> {
     return this.case(payload => payload);
   }
 
@@ -77,22 +77,20 @@ class Honeycomb<S> extends StoreObservable<S>
     return this.fromPromise(handler);
   }
 
-  fromPromise<P>(handler: P => Promise<(S => S) | S>): Bee<S, P> {
+  fromPromise<P>(handler: P => Promise<(S => S) | S>): bee.Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
-    return new Bee(store, caseSubject, queue.fromPromise(handler, next, error));
+    return bee.of(store, caseSubject, queue.fromPromise(handler, next, error));
   }
 
   willBees<P>(handler: P => ObservableInterface<(S => S) | S>): Bee<S, P> {
     return this.fromObservable(handler);
   }
 
-  fromObservable<P>(
-    handler: P => ObservableInterface<(S => S) | S>,
-  ): Bee<S, P> {
+  fromObservable<P>(handler: P => ObservableLike<(S => S) | S>): bee.Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
-    return new Bee(
+    return bee.of(
       store,
       caseSubject,
       queue.fromObservable(handler, next, error),
@@ -103,24 +101,20 @@ class Honeycomb<S> extends StoreObservable<S>
     return this.awaitPromise(handler);
   }
 
-  awaitPromise<P>(handler: (S, P) => Promise<S>): Bee<S, P> {
+  awaitPromise<P>(handler: (S, P) => Promise<S>): bee.Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
-    return new Bee(
-      store,
-      caseSubject,
-      queue.awaitPromise(handler, next, error),
-    );
+    return bee.of(store, caseSubject, queue.awaitPromise(handler, next, error));
   }
 
   awaitBees<P>(handler: (S, P) => ObservableInterface<S>): Bee<S, P> {
     return this.awaitObservable(handler);
   }
 
-  awaitObservable<P>(handler: (S, P) => ObservableInterface<S>): Bee<S, P> {
+  awaitObservable<P>(handler: (S, P) => ObservableLike<S>): bee.Bee<S, P> {
     const createCaseEmitters = this.#createCaseEmitters;
     const { queue, store, caseSubject, next, error } = createCaseEmitters();
-    return new Bee(
+    return bee.of(
       store,
       caseSubject,
       queue.awaitObservable(handler, next, error),
