@@ -20,6 +20,15 @@ export interface ObservableInterface<+T> {
     ((observer: ObserverInterface<T>) => SubscriptionInterface<T>);
 }
 
+export type ObservableLike<T> = {
+  +subscribe: ((
+    next: (T) => void,
+    error?: (Error) => void,
+    complete?: () => void,
+  ) => { unsubscribe(): void }) &
+    ((observer: ObserverLike<T>) => { unsubscribe(): void }),
+};
+
 export interface ObserverInterface<T> {
   +start?: void | ((subscription: SubscriptionInterface<T>) => void);
   +next?: void | ((value: T) => void);
