@@ -4,11 +4,11 @@
   "description": "ES Observable implementation",
   "main": "lib/index.js",
   "bugs": {
-    "url": "https://github.com/bigslycat/honeycombs/issues",
+    "url": "https://github.com/noveogroup/honeycombs/issues",
     "email": "me@stupidcat.wtf"
   },
-  "repository": "bigslycat/honeycombs",
-  "homepage": "https://github.com/bigslycat/honeycombs/packages/es-observable",
+  "repository": "noveogroup/honeycombs",
+  "homepage": "https://github.com/noveogroup/honeycombs/packages/es-observable",
   "contributors": [
     "Pavel Tereschenko <me@stupidcat.wtf> (https://github.com/bigslycat)",
     "Timofey Kuzmin <tkuzmin@gmail.com> (https://github.com/tkuzmin)"
