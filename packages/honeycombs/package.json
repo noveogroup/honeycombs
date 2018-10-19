@@ -1,6 +1,6 @@
 {
   "name": "honeycombs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "State manager with built-in side-effects",
   "main": "lib/index.js",
   "bugs": {
