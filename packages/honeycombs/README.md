@@ -67,7 +67,7 @@ import * as hc from 'honeycombs';
 - `observer.error(Error)`
 - `observer.complete()`
 
-`Subscription` is object with method `unsubscribe()`;
+`Subscription` is object with method `unsubscribe()`.
 
 ### `Bee`
 
