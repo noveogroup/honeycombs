@@ -1,6 +1,6 @@
 {
   "name": "honeycombs",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "State manager with built-in side-effects",
   "main": "lib/index.js",
   "bugs": {
@@ -16,7 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "core-js": "^2.5.7",
-    "es-observable": "^1.0.3",
+    "es-observable": "^1.0.4",
     "symbol-observable": "^1.2.0"
   },
   "files": [
